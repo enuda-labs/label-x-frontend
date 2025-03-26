@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
     setTimeout(() => {
       setIsLoading(false);
-      router.replace('/');
+      router.replace('/tasks/new');
     }, 1500);
   };
 
@@ -72,7 +72,7 @@ export default function LoginScreen() {
             <Button 
               onPress={handleLogin}
               isLoading={isLoading}
-              disabled={!username.trim() || !password.trim()}
+              //disabled={username === '' || password === ''}
               className="w-full"
             >
               Sign In
