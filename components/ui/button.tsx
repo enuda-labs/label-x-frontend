@@ -1,64 +1,80 @@
 import React from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps, Image, View } from 'react-native';
+import { Text, TouchableOpacity, ActivityIndicator, View } from 'react-native';
 import { cn } from '@/lib/cn';
 
-interface ButtonProps extends TouchableOpacityProps {
-  title: string;
-  variant?: 'primary' | 'secondary' | 'google';
-  fullWidth?: boolean;
+type ButtonProps = {
+  variant?: 'default' | 'outline' | 'ghost' | 'secondary' | 'destructive';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  children: React.ReactNode;
+  onPress?: () => void;
+  isLoading?: boolean;
+  disabled?: boolean;
+  className?: string;
   textClassName?: string;
-  icon?: React.ReactNode;
-  loading?: boolean
-  disabled?: boolean
-}
+};
 
-const CustomButton: React.FC<ButtonProps> = ({ 
-  onPress, 
-  title, 
-  loading = false,
+export const Button = ({
+  variant = 'default',
+  size = 'default',
+  children,
+  onPress,
+  isLoading = false,
   disabled = false,
-  variant = 'primary', 
-  fullWidth = true,
   className = '',
   textClassName = '',
-  icon,
-  ...props
-}) => {
+}: ButtonProps) => {
+  // Base styles for button
+  const baseStyles = "flex items-center justify-center rounded-lg transition-standard active:opacity-80";
+  
+  // Variant styles
   const variantStyles = {
-    primary: 'bg-primary',
-    secondary: 'bg-white border border-gray-300',
-    google: 'bg-primary-google',
+    default: "bg-primary",
+    outline: "border border-primary bg-transparent",
+    ghost: "bg-transparent hover:bg-secondary",
+    secondary: "bg-secondary",
+    destructive: "bg-destructive",
   };
-
-  const textStyles = {
-    primary: 'text-white',
-    secondary: 'text-gray-800',
-    google: 'text-white',
+  
+  // Size styles
+  const sizeStyles = {
+    default: "px-4 py-4",
+    sm: "px-3 py-1.5 text-sm",
+    lg: "px-6 py-3 text-lg",
+    icon: "w-9 h-9 p-0",
   };
-
+  
+  // Text styles
+  const textBaseStyles = "font-medium text-center";
+  const textVariantStyles = {
+    default: "text-white",
+    outline: "text-primary",
+    ghost: "text-foreground",
+    secondary: "text-secondary-foreground",
+    destructive: "text-destructive-foreground",
+  };
+  
+  const isDisabled = disabled || isLoading;
+  
   return (
     <TouchableOpacity
-      onPress={onPress}
-      className={cn(`py-4 rounded-lg ${fullWidth ? 'w-full' : ''} ${variantStyles[variant]} ${disabled || loading ? "opacity-70" : ""}`, className,)}
-      disabled={disabled || loading}
-      {...props}
+      onPress={!isDisabled ? onPress : undefined}
+      activeOpacity={0.8}
+      className={cn(
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        isDisabled && "opacity-70",
+        className
+      )}
+      disabled={isDisabled}
     >
-      {variant === 'google' ? (
-        <View className='flex flex-row items-center px-3'>
-        <View className='size-8 flex items-center justify-center bg-white rounded-lg py-2 px-5 '>
-        <Image source={require('../../assets/images/google.png')} className='size-6 object-contain' />
-        </View>
-        <Text className={cn(` flex-1 text-center font-medium ${textStyles[variant]} ${textClassName}`)}>
-        {title}
-      </Text>
-    </View>
-      ):(
-      <Text className={cn(`text-center font-medium ${textStyles[variant]} ${textClassName}`)}>
-        {title}
-      </Text>
+      {isLoading ? (
+        <ActivityIndicator size="small" color={variant === 'default' ? "#fff" : "#007AFF"} />
+      ) : (
+        <Text className={cn(textBaseStyles, textVariantStyles[variant], textClassName)}>
+          {children}
+        </Text>
       )}
     </TouchableOpacity>
   );
 };
-
-export default CustomButton;
