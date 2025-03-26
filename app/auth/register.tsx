@@ -16,7 +16,6 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     setIsLoading(true);
     
-    // Simulate registration
     setTimeout(() => {
       setIsLoading(false);
       router.replace('/');

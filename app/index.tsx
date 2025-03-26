@@ -36,7 +36,7 @@ export default function SplashScreen() {
       <Animated.View 
         style={{ 
           opacity: fadeAnim,
-          transform: [{ translateY }],
+          transform: [{ translateY: translateY }],
         }}
         className="w-full items-center"
       >
