@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'https://label-x.onrender.com/api/v1';
+export const BASE_API_URL = 'https://label-x-dock.onrender.com/api/v1';

@@ -3,8 +3,15 @@ import {View, Text, Image, Animated, ActivityIndicator} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Button} from '@/components/ui/button';
 import {MemoryStorage} from '@/utils/storage';
-import {ACCESS_TOKEN_KEY} from '@/constants';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '@/constants';
 import {useGlobalStore} from '@/context/store';
+import {AxiosClient} from '@/utils/axios';
+
+interface AuthResponse {
+	status: string;
+	access: string;
+	refresh: string;
+}
 
 export default function SplashScreen() {
 	const router = useRouter();
@@ -31,10 +38,21 @@ export default function SplashScreen() {
 	useEffect(() => {
 		const getLoggedInStatus = async () => {
 			const storage = new MemoryStorage();
-			const token = await storage.getItem(ACCESS_TOKEN_KEY);
+			const token = await storage.getItem(REFRESH_TOKEN_KEY);
 			if (token) {
-				setIsLoggedIn(true);
-				router.replace('/tasks/new');
+				const axiosClient = new AxiosClient();
+				const response = await axiosClient.post<
+					{refresh: string},
+					AuthResponse
+				>('/account/refresh-token/', {refresh: token});
+				if (response.status === 200) {
+					setIsLoggedIn(true);
+					storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
+					storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
+					router.replace('/tasks/new');
+				} else {
+					setIsLoggedIn(false);
+				}
 			}
 			setIsLoading(false);
 		};
