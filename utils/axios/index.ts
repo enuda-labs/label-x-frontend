@@ -5,7 +5,7 @@ import axios, {
 	AxiosResponse,
 } from 'axios';
 
-import {ACCESS_TOKEN_KEY} from '../../constants';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../../constants';
 import {BASE_API_URL} from '../../constants/env-vars';
 import {MemoryStorage} from '../storage';
 import {StorageInterface} from '../storage/storage.types';
@@ -65,6 +65,8 @@ export class AxiosClient {
 						(await this._storageClass.getItem(ACCESS_TOKEN_KEY)) != null;
 					if (tokenExists) {
 						router.replace('/auth/login');
+						await this._storageClass.removeItem(ACCESS_TOKEN_KEY);
+						await this._storageClass.removeItem(REFRESH_TOKEN_KEY);
 					}
 					this._onAccessTokenExpire?.();
 				}

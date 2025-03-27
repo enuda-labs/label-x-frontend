@@ -46,8 +46,15 @@ export default function LoginScreen() {
 
 	const handleLogin = async () => {
 		try {
+			if (!username || !password) {
+				return setErrorMessage('Please enter username and password');
+			}
 			setIsLoading(true);
+			setErrorMessage('');
 			const axiosClient = new AxiosClient();
+			const storage = new MemoryStorage();
+			storage.removeItem(ACCESS_TOKEN_KEY);
+			storage.removeItem(REFRESH_TOKEN_KEY);
 
 			const response = await axiosClient.post<LoginBody, LoginResponse>(
 				'/account/login/',
@@ -58,7 +65,6 @@ export default function LoginScreen() {
 			);
 
 			if (response.status === 200) {
-				const storage = new MemoryStorage();
 				await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
 				await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
 				setIsLoggedIn(true);

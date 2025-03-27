@@ -42,6 +42,9 @@ export default function RegisterScreen() {
 
 	const handleRegister = async () => {
 		try {
+			if (!name || !password || !email) {
+				return setErrorMessage('Please input all fields');
+			}
 			setIsLoading(true);
 			setErrorMessage('');
 			const axiosClient = new AxiosClient();
