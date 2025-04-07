@@ -130,7 +130,7 @@ export default function NewTaskScreen() {
   };
 
   const redirectToLogin = () => {
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   };
 
   return (

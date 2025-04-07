@@ -7,26 +7,12 @@ import { cn } from '@/lib/cn';
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '../../constants/env-vars';
-
-
-type Task = {
-  id: string;
-  title: string;
-  task_type: 'TEXT' | 'IMAGE' | 'VIDEO';
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
-  assigned_to: string | null;
-  created_at: string;
-  updated_at: string;
-  human_reviewed: boolean;
-  serial_no: string;
-  submitted_by: string;
-  task_id: number;
-};
+import { Task } from '../../components/types/task';
 
 export default function TaskDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<Task | null>(null); // Removed the initial static task object here
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null); // add state for access token
