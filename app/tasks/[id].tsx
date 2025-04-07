@@ -6,6 +6,8 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { cn } from '@/lib/cn';
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY } from '@/constants';
+import { BASE_API_URL } from '../../constants/env-vars';
+
 
 type Task = {
   id: string;
@@ -50,7 +52,7 @@ export default function TaskDetailScreen() {
 
     const fetchTaskDetails = async () => {
       try {
-        const response = await fetch(`https://label-x-dock.onrender.com/api/v1/tasks/status/${id}/`, {
+        const response = await fetch(`${BASE_API_URL}/tasks/status/${id}/`, {
           method: 'GET',
           headers: {
             'accept': 'application/json',
@@ -63,7 +65,7 @@ export default function TaskDetailScreen() {
         }
 
         const data = await response.json();
-        console.log(data.data.submitted_by);
+      
         setTask(data.data);
       } catch (err) {
         setError('Failed to load task details.');

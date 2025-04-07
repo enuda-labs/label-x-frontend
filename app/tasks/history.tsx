@@ -5,6 +5,8 @@ import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { MemoryStorage } from '@/utils/storage'; 
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants'; 
+import { BASE_API_URL } from '../../constants/env-vars';
+
 
 // Define the Task interface
 interface Task {
@@ -16,7 +18,7 @@ interface Task {
 const storage = new MemoryStorage();
 
 const refreshAccessToken = async (refreshToken: string) => {
-  const refreshUrl = 'https://label-x-dock.onrender.com/api/v1/account/token/refresh/';
+  const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
   const refreshResponse = await fetch(refreshUrl, {
     method: 'POST',
     headers: {
@@ -39,7 +41,7 @@ const refreshAccessToken = async (refreshToken: string) => {
 
 const fetchTasks = async (accessToken: string, refreshToken: string) => {
   try {
-    const tasksUrl = 'https://label-x-dock.onrender.com/api/v1/tasks/my-tasks/';
+    const tasksUrl = `${BASE_API_URL}/tasks/my-tasks/`;
     let response = await fetch(tasksUrl, {
       method: 'GET',
       headers: {
@@ -57,7 +59,7 @@ const fetchTasks = async (accessToken: string, refreshToken: string) => {
     }
 
     const tasks = await response.json();
-    console.log(tasks);
+  
     return tasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);

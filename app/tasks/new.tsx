@@ -7,13 +7,15 @@ import { TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
+import { BASE_API_URL } from '../../constants/env-vars';
+
 
 export default function NewTaskScreen() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (data: any) => {
-    const url = 'https://label-x-dock.onrender.com/api/v1/tasks/';
+    const url = `${BASE_API_URL}/tasks/`;
 
     const storage = new MemoryStorage();
 
@@ -38,7 +40,7 @@ export default function NewTaskScreen() {
 
       // Function to refresh the access token
       const refreshAccessToken = async () => {
-        const refreshUrl = 'https://label-x-dock.onrender.com/api/v1/account/token/refresh/';
+        const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
         const refreshResponse = await fetch(refreshUrl, {
           method: 'POST',
           headers: {
@@ -71,7 +73,7 @@ export default function NewTaskScreen() {
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log('Task created:', responseData);
+     
 
         if (responseData && responseData.data && responseData.data.task_id) {
           const taskId = responseData.data.task_id;
