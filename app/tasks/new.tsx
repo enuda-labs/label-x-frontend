@@ -50,6 +50,7 @@ export default function NewTaskScreen() {
 			if (isAxiosError(error)) {
 				console.log(error.response?.data);
 			}
+			console.log(error);
 		} finally {
 			setIsLoading(false);
 		}

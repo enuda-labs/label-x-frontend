@@ -62,7 +62,7 @@ export default function TaskDetailScreen() {
 			if (id) {
 				const storage = new MemoryStorage();
 				const token = await storage.getItem(ACCESS_TOKEN_KEY);
-				const url = `${BASE_API_URL.replace('http', 'ws').replace(
+				const url = `${BASE_API_URL.replace('https', 'wss').replace(
 					'/api/v1',
 					''
 				)}/ws/task/?token=${token}`;
