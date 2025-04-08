@@ -29,7 +29,7 @@ jobs:
           npm run format-check
 
       - name: 🧪 Run Tests
-        run: npm test -- --coverage
+        run: npm run test:ci
 
     #   - name: 🚀 Build Expo project
     #     run: npx expo export --platform web
