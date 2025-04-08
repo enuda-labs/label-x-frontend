@@ -1,4 +1,4 @@
-import React, {useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, Image, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
@@ -33,8 +33,8 @@ export default function SplashScreen() {
 
   return (
     <View className="flex-1 bg-background justify-center items-center px-6">
-      <Animated.View 
-        style={{ 
+      <Animated.View
+        style={{
           opacity: fadeAnim,
           transform: [{ translateY: translateY }],
         }}
@@ -43,29 +43,25 @@ export default function SplashScreen() {
         <View className="w-24 h-24 bg-primary rounded-2xl mb-6 items-center justify-center">
           <Text className="text-4xl text-white font-bold">Lx</Text>
         </View>
-        
-        <Text className="text-3xl text-foreground font-bold mb-2 text-center">Your go to AI Data Processor</Text>
+
+        <Text className="text-3xl text-foreground font-bold mb-2 text-center">
+          Your go to AI Data Processor
+        </Text>
         <Text className="text-lg text-muted-foreground text-center mb-12">
-        Unlock the power of AI-driven data processing with LabelX. Streamline, analyze, and optimize with precision.
+          Unlock the power of AI-driven data processing with LabelX. Streamline, analyze, and
+          optimize with precision.
         </Text>
 
         <View className="flex-col gap-y-4 w-full max-w-xs">
-          <Button 
-            onPress={handleGetStarted}
-            className="w-full"
-          >
+          <Button onPress={handleGetStarted} className="w-full">
             Get Started
           </Button>
-          
-          <Button 
-            variant="outline"
-            onPress={handleSignUp}
-            className="w-full"
-          >
+
+          <Button variant="outline" onPress={handleSignUp} className="w-full">
             Create Account
           </Button>
         </View>
-        
+
         <Text className="text-xs text-muted-foreground text-center mt-12">
           By continuing, you agree to our Terms of Service and Privacy Policy
         </Text>

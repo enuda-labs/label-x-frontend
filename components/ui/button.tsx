@@ -24,37 +24,38 @@ export const Button = ({
   textClassName = '',
 }: ButtonProps) => {
   // Base styles for button
-  const baseStyles = "flex items-center justify-center rounded-lg transition-standard active:opacity-80";
-  
+  const baseStyles =
+    'flex items-center justify-center rounded-lg transition-standard active:opacity-80';
+
   // Variant styles
   const variantStyles = {
-    default: "bg-primary",
-    outline: "border border-primary bg-transparent",
-    ghost: "bg-transparent hover:bg-secondary",
-    secondary: "bg-secondary",
-    destructive: "bg-destructive",
+    default: 'bg-primary',
+    outline: 'border border-primary bg-transparent',
+    ghost: 'bg-transparent hover:bg-secondary',
+    secondary: 'bg-secondary',
+    destructive: 'bg-destructive',
   };
-  
+
   // Size styles
   const sizeStyles = {
-    default: "px-4 py-4",
-    sm: "px-3 py-1.5 text-sm",
-    lg: "px-6 py-3 text-lg",
-    icon: "w-9 h-9 p-0",
+    default: 'px-4 py-4',
+    sm: 'px-3 py-1.5 text-sm',
+    lg: 'px-6 py-3 text-lg',
+    icon: 'w-9 h-9 p-0',
   };
-  
+
   // Text styles
-  const textBaseStyles = "font-medium text-center";
+  const textBaseStyles = 'font-medium text-center';
   const textVariantStyles = {
-    default: "text-white",
-    outline: "text-primary",
-    ghost: "text-foreground",
-    secondary: "text-secondary-foreground",
-    destructive: "text-destructive-foreground",
+    default: 'text-white',
+    outline: 'text-primary',
+    ghost: 'text-foreground',
+    secondary: 'text-secondary-foreground',
+    destructive: 'text-destructive-foreground',
   };
-  
+
   const isDisabled = disabled || isLoading;
-  
+
   return (
     <TouchableOpacity
       onPress={!isDisabled ? onPress : undefined}
@@ -63,13 +64,13 @@ export const Button = ({
         baseStyles,
         variantStyles[variant],
         sizeStyles[size],
-        isDisabled && "opacity-70",
+        isDisabled && 'opacity-70',
         className
       )}
       disabled={isDisabled}
     >
       {isLoading ? (
-        <ActivityIndicator size="small" color={variant === 'default' ? "#fff" : "#007AFF"} />
+        <ActivityIndicator size="small" color={variant === 'default' ? '#fff' : '#007AFF'} />
       ) : (
         <Text className={cn(textBaseStyles, textVariantStyles[variant], textClassName)}>
           {children}

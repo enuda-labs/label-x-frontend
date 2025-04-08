@@ -12,7 +12,13 @@ type InputProps = {
   error?: string;
   className?: string;
   inputClassName?: string;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'number-pad' | 'decimal-pad';
+  keyboardType?:
+    | 'default'
+    | 'email-address'
+    | 'numeric'
+    | 'phone-pad'
+    | 'number-pad'
+    | 'decimal-pad';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   autoCorrect?: boolean;
 };
@@ -33,12 +39,8 @@ export const Input = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
 
   return (
-    <View className={cn("space-y-2 w-full", className)}>
-      {label && (
-        <Text className="text-md mb-2 font-semibold text-foreground">
-          {label}
-        </Text>
-      )}
+    <View className={cn('space-y-2 w-full', className)}>
+      {label && <Text className="text-md mb-2 font-semibold text-foreground">{label}</Text>}
 
       <View className="relative">
         <TextInput
@@ -47,16 +49,16 @@ export const Input = ({
           placeholder={placeholder}
           secureTextEntry={isPasswordVisible}
           className={cn(
-            "w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground pr-12",
-            "focus:border-primary focus:ring-1 focus:ring-primary",
-            error && "border-destructive",
+            'w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground pr-12',
+            'focus:border-primary focus:ring-1 focus:ring-primary',
+            error && 'border-destructive',
             inputClassName
           )}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           autoCorrect={autoCorrect}
         />
-        
+
         {secureTextEntry && (
           <TouchableOpacity
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -71,9 +73,7 @@ export const Input = ({
         )}
       </View>
 
-      {error && (
-        <Text className="text-xs text-destructive">{error}</Text>
-      )}
+      {error && <Text className="text-xs text-destructive">{error}</Text>}
     </View>
   );
 };

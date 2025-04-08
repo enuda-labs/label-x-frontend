@@ -3,46 +3,45 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --background: 240 10% 10%; /* Deep charcoal background */
-        --foreground: 40 100% 97%; /* Soft warm white text */
-    
-        --card: 240 10% 12%; /* Dark gray card */
-        --card-foreground: 40 100% 97%; /* Warm white text */
-    
-        --popover: 240 10% 14%; /* Slightly lighter dark gray */
-        --popover-foreground: 40 100% 97%; /* Warm white text */
-    
-        --primary: 30 100% 50%; /* Vibrant orange, stands out on dark */
-        --primary-foreground: 240 10% 10%; /* Dark text for contrast */
-    
-        --secondary: 12 65% 30%; /* Muted deep orange-brown */
-        --secondary-foreground: 40 100% 97%; /* Warm white text */
-    
-        --muted: 240 10% 18%; 
-        --muted-foreground: 240 5% 60%; /* Soft gray text */
-    
-        --accent: 345 85% 47%; /* Rich reddish-pink for contrast */
-        --accent-foreground: 40 100% 97%; /* Warm white */
-    
-        --destructive: 0 70% 45%; /* Deep warm red */
-        --destructive-foreground: 40 100% 97%; /* Warm white */
-    
-        --border: 240 10% 20%; /* Dark border */
-        --input: 240 10% 22%; /* Dark input field */
-        --ring: 30 100% 50%; /* Vibrant orange ring effect */
-    
-        --radius: 0.75rem;
+  :root {
+    --background: 240 10% 10%; /* Deep charcoal background */
+    --foreground: 40 100% 97%; /* Soft warm white text */
 
-      }
-    
-* {
+    --card: 240 10% 12%; /* Dark gray card */
+    --card-foreground: 40 100% 97%; /* Warm white text */
+
+    --popover: 240 10% 14%; /* Slightly lighter dark gray */
+    --popover-foreground: 40 100% 97%; /* Warm white text */
+
+    --primary: 30 100% 50%; /* Vibrant orange, stands out on dark */
+    --primary-foreground: 240 10% 10%; /* Dark text for contrast */
+
+    --secondary: 12 65% 30%; /* Muted deep orange-brown */
+    --secondary-foreground: 40 100% 97%; /* Warm white text */
+
+    --muted: 240 10% 18%;
+    --muted-foreground: 240 5% 60%; /* Soft gray text */
+
+    --accent: 345 85% 47%; /* Rich reddish-pink for contrast */
+    --accent-foreground: 40 100% 97%; /* Warm white */
+
+    --destructive: 0 70% 45%; /* Deep warm red */
+    --destructive-foreground: 40 100% 97%; /* Warm white */
+
+    --border: 240 10% 20%; /* Dark border */
+    --input: 240 10% 22%; /* Dark input field */
+    --ring: 30 100% 50%; /* Vibrant orange ring effect */
+
+    --radius: 0.75rem;
+  }
+
+  * {
     @apply border-border selection:bg-primary/10 selection:text-primary;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv02', 'cv03';
   }
 
   html {
@@ -54,56 +53,55 @@
   .glass-effect {
     @apply backdrop-blur-lg bg-white/70 border border-white/20 shadow-lg;
   }
-  
+
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .transition-standard {
     @apply transition-all duration-300 ease-in-out;
   }
 }
 
 #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+  to {
+    transform: rotate(360deg);
   }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
   }
-  .logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-  }
-  
-  @keyframes logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-      animation: logo-spin infinite 20s linear;
-    }
-  }
-  
-  .card {
-    padding: 2em;
-  }
-  
-  .read-the-docs {
-    color: #888;
-  }
-  
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}

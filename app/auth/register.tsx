@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
@@ -15,7 +22,7 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     setIsLoading(true);
-    
+
     setTimeout(() => {
       setIsLoading(false);
       router.replace('/');
@@ -28,11 +35,11 @@ export default function RegisterScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView 
-          contentContainerClassName="flex-grow justify-center px-6 py-12" 
+        <ScrollView
+          contentContainerClassName="flex-grow justify-center px-6 py-12"
           keyboardShouldPersistTaps="handled"
         >
-            <TouchableOpacity onPress={() => router.back()} className="absolute top-10 left-4 z-10">
+          <TouchableOpacity onPress={() => router.back()} className="absolute top-10 left-4 z-10">
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
 
@@ -54,7 +61,7 @@ export default function RegisterScreen() {
                 onChangeText={setName}
                 autoCapitalize="words"
               />
-              
+
               <Input
                 label="Email"
                 placeholder="Enter your email"
@@ -63,7 +70,7 @@ export default function RegisterScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              
+
               <Input
                 label="Password"
                 placeholder="Create a password"
@@ -73,7 +80,7 @@ export default function RegisterScreen() {
               />
             </View>
 
-            <Button 
+            <Button
               onPress={handleRegister}
               isLoading={isLoading}
               disabled={!name || !email || !password}
@@ -83,13 +90,9 @@ export default function RegisterScreen() {
             </Button>
 
             <View className="flex-row justify-center space-x-1">
-              <Text className="text-muted-foreground text-sm">
-                Already have an account?
-              </Text>
+              <Text className="text-muted-foreground text-sm">Already have an account?</Text>
               <TouchableOpacity onPress={() => router.push('/auth/login')}>
-                <Text className="text-primary font-semibold ml-2">
-                  Sign in
-                </Text>
+                <Text className="text-primary font-semibold ml-2">Sign in</Text>
               </TouchableOpacity>
             </View>
           </View>

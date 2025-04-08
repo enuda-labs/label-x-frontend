@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
@@ -27,8 +34,8 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView 
-          contentContainerClassName="flex-grow justify-center px-6 py-12" 
+        <ScrollView
+          contentContainerClassName="flex-grow justify-center px-6 py-12"
           keyboardShouldPersistTaps="handled"
         >
           <TouchableOpacity onPress={() => router.back()} className="absolute top-10 left-4 z-10">
@@ -53,7 +60,7 @@ export default function LoginScreen() {
                 onChangeText={setUsername}
                 autoCapitalize="none"
               />
-              
+
               <Input
                 label="Password"
                 placeholder="Enter your password"
@@ -69,7 +76,7 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            <Button 
+            <Button
               onPress={handleLogin}
               isLoading={isLoading}
               //disabled={username === '' || password === ''}
@@ -79,13 +86,9 @@ export default function LoginScreen() {
             </Button>
 
             <View className="flex-row justify-center space-x-1">
-              <Text className="text-muted-foreground text-sm">
-                Don't have an account?
-              </Text>
+              <Text className="text-muted-foreground text-sm">Don't have an account?</Text>
               <TouchableOpacity onPress={() => router.push('/auth/register')}>
-                <Text className="text-primary ml-2 font-medium">
-                  Sign up
-                </Text>
+                <Text className="text-primary ml-2 font-medium">Sign up</Text>
               </TouchableOpacity>
             </View>
           </View>
