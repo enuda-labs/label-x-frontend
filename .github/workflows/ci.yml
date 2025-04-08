@@ -1,0 +1,35 @@
+name: Expo CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: ✅ Run Lint and Prettier
+        run: |
+          npm run lint
+          npm run format-check
+
+      - name: 🧪 Run Tests
+        run: npm test -- --coverage
+
+    #   - name: 🚀 Build Expo project
+    #     run: npx expo export --platform web

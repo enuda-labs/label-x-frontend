@@ -9,12 +9,7 @@ type CardProps = {
 
 export const Card = ({ children, className }: CardProps) => {
   return (
-    <View 
-      className={cn(
-        "rounded-2xl bg-card p-6 shadow-sm border border-border", 
-        className
-      )}
-    >
+    <View className={cn('rounded-2xl bg-card p-6 shadow-sm border border-border', className)}>
       {children}
     </View>
   );
@@ -26,11 +21,7 @@ type CardHeaderProps = {
 };
 
 export const CardHeader = ({ children, className }: CardHeaderProps) => {
-  return (
-    <View className={cn("space-y-1.5", className)}>
-      {children}
-    </View>
-  );
+  return <View className={cn('space-y-1.5', className)}>{children}</View>;
 };
 
 type CardTitleProps = {
@@ -40,7 +31,7 @@ type CardTitleProps = {
 
 export const CardTitle = ({ children, className }: CardTitleProps) => {
   return (
-    <Text className={cn("text-2xl font-semibold tracking-tight text-foreground", className)}>
+    <Text className={cn('text-2xl font-semibold tracking-tight text-foreground', className)}>
       {children}
     </Text>
   );
@@ -52,11 +43,7 @@ type CardDescriptionProps = {
 };
 
 export const CardDescription = ({ children, className }: CardDescriptionProps) => {
-  return (
-    <Text className={cn("text-sm text-muted-foreground", className)}>
-      {children}
-    </Text>
-  );
+  return <Text className={cn('text-sm text-muted-foreground', className)}>{children}</Text>;
 };
 
 type CardContentProps = {
@@ -65,11 +52,7 @@ type CardContentProps = {
 };
 
 export const CardContent = ({ children, className }: CardContentProps) => {
-  return (
-    <View className={cn("pt-6", className)}>
-      {children}
-    </View>
-  );
+  return <View className={cn('pt-6', className)}>{children}</View>;
 };
 
 type CardFooterProps = {
@@ -78,9 +61,5 @@ type CardFooterProps = {
 };
 
 export const CardFooter = ({ children, className }: CardFooterProps) => {
-  return (
-    <View className={cn("flex flex-row items-center pt-6", className)}>
-      {children}
-    </View>
-  );
+  return <View className={cn('flex flex-row items-center pt-6', className)}>{children}</View>;
 };

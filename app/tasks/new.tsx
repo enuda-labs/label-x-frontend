@@ -26,11 +26,11 @@ export default function NewTaskScreen() {
       >
         <View className="flex-row items-center px-4 py-4 border-b border-border">
           <TouchableOpacity onPress={() => router.push('/tasks/history')} className="mr-4">
-          <MaterialCommunityIcons name="menu" size={24} color="white" />
+            <MaterialCommunityIcons name="menu" size={24} color="white" />
           </TouchableOpacity>
           <Text className="text-xl font-bold text-foreground text-center">Create New Task</Text>
         </View>
-        
+
         <ScrollView
           contentContainerClassName="flex-grow p-4 mt-4"
           keyboardShouldPersistTaps="handled"
