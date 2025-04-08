@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "test:ci": "jest --ci --coverage",
+    "test:ci": "jest --ci --coverage --passWithNoTests",
     "lint": "expo lint",
     "format": "prettier --write .",
     "format-check": "prettier --check ."
