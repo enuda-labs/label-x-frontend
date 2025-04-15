@@ -82,7 +82,7 @@ const ProjectDetails = () => {
 						<ActivityIndicator size="large" color="#F97316" />
 					) : (
 						<Text className="text-white">
-							No reviewers has been added to this project
+							No reviewers have been added to this project
 						</Text>
 					)}
 				</View>
