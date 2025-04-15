@@ -15,7 +15,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {AxiosClient} from '@/utils/axios';
 import {isAxiosError} from 'axios';
 import {MemoryStorage} from '@/utils/storage';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '@/constants';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE} from '@/constants';
 import {useGlobalStore} from '@/context/store';
 
 interface LoginBody {
@@ -27,6 +27,8 @@ interface UserData {
 	id: number;
 	username: string;
 	email: string;
+	is_reviewer: boolean;
+	is_admin: boolean;
 }
 
 interface LoginResponse {
@@ -68,6 +70,13 @@ export default function LoginScreen() {
 				await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
 				await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
 				setIsLoggedIn(true);
+				if (response.data.user_data.is_admin) {
+					router.replace('/admin');
+					storage.setItem(ROLE, 'admin');
+					return;
+				} else if (response.data.user_data.is_reviewer) {
+					storage.setItem(ROLE, 'reviewer');
+				}
 				router.replace('/tasks/new');
 			}
 		} catch (error: any) {

@@ -48,7 +48,7 @@ export default function NewTaskScreen() {
 			}
 		} catch (error) {
 			if (isAxiosError(error)) {
-				console.log(error.response?.data);
+				return console.log(error.response?.data);
 			}
 			console.log(error);
 		} finally {
