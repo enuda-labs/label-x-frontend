@@ -103,7 +103,7 @@ export default function SplashScreen() {
 					analyze, and optimize with precision.
 				</Text>
 
-				<View className="flex-col gap-y-4 w-full max-w-xs">
+				<View className="flex-col lg:flex-row items-center justify-center gap-4 w-full max-w-xs">
 					<Button onPress={handleGetStarted} className="w-full">
 						Get Started
 					</Button>
