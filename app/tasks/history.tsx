@@ -96,6 +96,7 @@ const TaskHistoryScreen = () => {
         <Text className="text-xl flex-1 font-bold text-center text-foreground">Task History</Text>
       </View>
 
+
       <ScrollView className="p-4">
         {tasks.map((task) => (
           <TouchableOpacity

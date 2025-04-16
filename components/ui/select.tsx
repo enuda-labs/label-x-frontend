@@ -24,7 +24,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, error }: Cus
         }}
       >
         <Text style={{ color: value ? '#fff' : '#9ca3af' }}>
-          {value ? options.find((option) => option.value === value)?.label : placeholder}
+          {value ? options.find(option => option.value === value)?.label : placeholder}
         </Text>
         <Ionicons name="chevron-down" size={24} color="#888" />
       </Pressable>
@@ -48,7 +48,7 @@ const CustomSelect = ({ value, onValueChange, options, placeholder, error }: Cus
             shadowRadius: 4,
           }}
         >
-          {options.map((option) => (
+          {options.map(option => (
             <Pressable
               key={option.value}
               onPress={() => {
