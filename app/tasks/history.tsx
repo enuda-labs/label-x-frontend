@@ -87,14 +87,35 @@ const TaskHistoryScreen = () => {
     loadTasks();
   }, []);
 
+
+  const handleReviewPress = () => {
+    router.push('/review/reviews');
+  };
+
+  const handlePendingPress = () => {
+    router.push('/review/pending');
+  };
+
+
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-row items-center px-4 py-4 border-b border-border">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4">
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text className="text-xl flex-1 font-bold text-center text-foreground">Task History</Text>
-      </View>
+    <View className="flex-row items-center px-4 py-4 border-b border-border" style={{ backgroundColor: '#F97316' }}>
+
+      <TouchableOpacity onPress={() => router.back()} className="mr-4">
+        <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+      </TouchableOpacity>
+      <Text className="text-xl flex-1 font-bold text-center text-white">
+        Task History
+      </Text>
+      <TouchableOpacity onPress={handleReviewPress} className="ml-4">
+        <MaterialCommunityIcons name="menu" size={24} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handlePendingPress} className="ml-4">
+      <Text className="text-xl flex-1 font-bold text-center text-white">
+        Pending Review
+      </Text>
+      </TouchableOpacity>
+    </View>
 
       <ScrollView className="p-4">
         {tasks.map((task) => (
