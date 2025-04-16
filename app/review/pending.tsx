@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Alert, Pressable, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  ActivityIndicator, 
+  Alert, 
+  Pressable, 
+  TouchableOpacity 
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -7,20 +15,9 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { MemoryStorage } from '@/utils/storage';  
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
+import { ReviewTask } from '../../components/types/review-task';
 
 const storage = new MemoryStorage(); 
-
-interface ReviewTask {
-  id: string;
-  serial_no: string;
-  text: string;
-  ai_classification: string;
-  confidence: number;
-  human_reviewed: string;
-  final_label: string | null;
-  priority: string;
-  created_at: string;
-}
 
 const redirectToLogin = () => {
   Alert.alert('Session Expired', 'Please log in again.');
@@ -47,7 +44,6 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
     const data = await res.json();
     const newAccessToken = data.access;
 
-  
     await storage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
     return newAccessToken;
   } catch (error) {
@@ -98,7 +94,7 @@ const fetchPendingReviews = async (
   }
 };
 
-const ReviewNeededTasksScreen = () => {
+const PendingReviewsTasksScreen = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -130,38 +126,32 @@ const ReviewNeededTasksScreen = () => {
     loadTasks();
   }, []);
 
-
   const handleAssignedPress = () => {
     router.push('/review/assign');
   };
-
-
 
   const handleBackNavigation = () => {
     if (router.canGoBack()) {
       router.back(); 
     } else {
-     
       router.push('/review/reviews'); 
-    
     }
   };
-
 
   return (
     <SafeAreaView className="flex-1 bg-background px-4 pt-4">
       <View className="flex-row justify-around items-center mb-4">
         <View className='flex-row items-center'>
-        <Pressable onPress={handleBackNavigation}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
-        </Pressable>
-        <Text className="ml-3 text-xl text-white font-semibold">📋 My Pending Reviews</Text>
+          <Pressable onPress={handleBackNavigation}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
+          </Pressable>
+          <Text className="ml-3 text-xl text-white font-semibold">📋 My Pending Reviews</Text>
         </View>
         <View className='flex-row items-center'>
-        <TouchableOpacity onPress={handleAssignedPress}>
-          <MaterialCommunityIcons name="menu" size={24} color="#FFF" />
-        </TouchableOpacity>
-        <Text className="ml-3 text-xl text-white font-semibold">📋 Assigned To Me</Text>
+          <TouchableOpacity onPress={handleAssignedPress}>
+            <MaterialCommunityIcons name="menu" size={24} color="#FFF" />
+          </TouchableOpacity>
+          <Text className="ml-3 text-xl text-white font-semibold">📋 Assigned To Me</Text>
         </View>
       </View>
 
@@ -196,4 +186,4 @@ const ReviewNeededTasksScreen = () => {
   );
 };
 
-export default ReviewNeededTasksScreen;
+export default PendingReviewsTasksScreen;

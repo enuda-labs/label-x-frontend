@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
-
-interface ReviewTask {
-  id: string;
-  serial_no: string;
-  text: string;
-  ai_classification: string;
-  confidence: number;
-  human_reviewed: string;
-  final_label: string;
-  priority: string;
-  created_at: string;
-}
+import { ReviewTask } from '../../components/types/review-task';
 
 const storage = new MemoryStorage();
 
-const redirectToLogin = () => {
+const redirectToLogin = (): void => {
   Alert.alert('Session Expired', 'Please log in again.');
 };
 
-const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
+const refreshAccessToken = async (
+  refreshToken: string
+): Promise<string | null> => {
   const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
   try {
     const refreshResponse = await fetch(refreshUrl, {
@@ -36,12 +35,14 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
       },
       body: JSON.stringify({ refresh: refreshToken }),
     });
+
     if (!refreshResponse.ok) {
       const errorResponse = await refreshResponse.json();
       console.error('Error refreshing token:', errorResponse);
       redirectToLogin();
       return null;
     }
+
     const refreshedTokens = await refreshResponse.json();
     return refreshedTokens.access;
   } catch (error) {
@@ -51,7 +52,10 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
   }
 };
 
-const fetchReviewTasks = async (accessToken: string, refreshToken: string): Promise<ReviewTask[]> => {
+const fetchReviewTasks = async (
+  accessToken: string,
+  refreshToken: string
+): Promise<ReviewTask[]> => {
   const tasksUrl = `${BASE_API_URL}/tasks/review-needed/`;
   try {
     const response = await fetch(tasksUrl, {
@@ -61,6 +65,7 @@ const fetchReviewTasks = async (accessToken: string, refreshToken: string): Prom
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
     if (response.status === 401) {
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
@@ -69,7 +74,13 @@ const fetchReviewTasks = async (accessToken: string, refreshToken: string): Prom
         return [];
       }
     }
-    const tasks = await response.json();
+
+    const jsonData = await response.json();
+    // Ensure we extract an array: if jsonData is not an array, use jsonData.tasks (or another key) if available.
+    const tasks: ReviewTask[] = Array.isArray(jsonData) 
+      ? jsonData 
+      : jsonData.tasks || [];
+      
     return tasks;
   } catch (error) {
     console.error('Error fetching review tasks:', error);
@@ -77,7 +88,11 @@ const fetchReviewTasks = async (accessToken: string, refreshToken: string): Prom
   }
 };
 
-const assignTaskToMe = async (taskId: string, accessToken: string, refreshToken: string): Promise<boolean> => {
+const assignTaskToMe = async (
+  taskId: string,
+  accessToken: string,
+  refreshToken: string
+): Promise<boolean> => {
   const assignUrl = `${BASE_API_URL}/tasks/assign-to-me/`;
   try {
     const response = await fetch(assignUrl, {
@@ -102,22 +117,26 @@ const assignTaskToMe = async (taskId: string, accessToken: string, refreshToken:
       Alert.alert('Success', result.message || 'Task assigned to you!');
       return true;
     } else if (response.status === 400 || response.status === 401) {
-      // Specifically handle 400 or 401 errors
-      Alert.alert('Error', result.message || 'Failed to assign task. Please try again.');
+      Alert.alert(
+        'Error',
+        result.message || 'Failed to assign task. Please try again.'
+      );
       return false;
-    }  
-     else {
+    } else {
       Alert.alert('Error', result.message || 'Failed to assign task.');
       return false;
     }
   } catch (error) {
     console.error('Error assigning task:', error);
-    Alert.alert('Error', 'An unexpected error occurred while assigning the task.');
+    Alert.alert(
+      'Error',
+      'An unexpected error occurred while assigning the task.'
+    );
     return false;
   }
 };
 
-const ReviewNeededTasksScreen = () => {
+const ReviewNeededTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -139,7 +158,7 @@ const ReviewNeededTasksScreen = () => {
     loadTasks();
   }, []);
 
-  const handleAssign = async (taskId: string) => {
+  const handleAssign = async (taskId: string): Promise<void> => {
     const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
     const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
     if (accessToken && refreshToken) {
@@ -153,6 +172,10 @@ const ReviewNeededTasksScreen = () => {
     }
   };
 
+  const handleBackNavigation = (): void => {
+    router.push('/tasks/history');
+  };
+
   if (loading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-background">
@@ -160,11 +183,6 @@ const ReviewNeededTasksScreen = () => {
       </SafeAreaView>
     );
   }
-
-  const handleBackNavigation = () => {
-      router.push('/tasks/history'); 
-  
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -179,16 +197,37 @@ const ReviewNeededTasksScreen = () => {
 
       <ScrollView className="p-4">
         {tasks.map((task) => (
-          <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
-            <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
-            <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
-            <Text className="mb-1 text-foreground">Text: {task.text}</Text>
-            <Text className="mb-1 text-foreground">AI Classification: {task.ai_classification}</Text>
-            <Text className="mb-1 text-foreground">Confidence: {task.confidence}</Text>
-            <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
-            <Text className="mb-1 text-foreground">Final Label: {task.final_label}</Text>
-            <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
-            <Text className="mb-1 text-foreground">Created At: {task.created_at}</Text>
+          <View
+            key={task.id}
+            className="mb-4 p-4 border border-border rounded-lg bg-card"
+          >
+            <Text className="mb-1 font-bold text-foreground">
+              ID: {task.id}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Serial No: {task.serial_no}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Text: {task.text}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              AI Classification: {task.ai_classification}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Confidence: {task.confidence}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Human Reviewed: {task.human_reviewed}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Final Label: {task.final_label}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Priority: {task.priority}
+            </Text>
+            <Text className="mb-1 text-foreground">
+              Created At: {task.created_at}
+            </Text>
             <TouchableOpacity
               onPress={() => handleAssign(task.id)}
               style={{ backgroundColor: '#F97316' }}

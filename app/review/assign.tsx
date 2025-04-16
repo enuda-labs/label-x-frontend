@@ -3,11 +3,13 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
+import { ReviewTask } from '../../components/types/review-task';
 
-
+// Define the RawTask type locally
 interface RawTask {
   id: number;
   serial_no: string;
@@ -32,19 +34,6 @@ interface RawTask {
   updated_at: string;
   priority: string;
   group: number;
-}
-
-
-interface ReviewTask {
-  id: string;
-  serial_no: string;
-  text: string;
-  ai_classification: string;
-  confidence: number;
-  human_reviewed: string;
-  final_label: string | null;
-  priority: string;
-  created_at: string;
 }
 
 const storage = new MemoryStorage();
@@ -105,22 +94,22 @@ const fetchAssignedTasks = async (accessToken: string, refreshToken: string): Pr
   }
 };
 
-
 const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
-  return tasks.map((task: any) => ({
+  return tasks.map((task) => ({
     id: task.id.toString(),
     serial_no: task.serial_no,
     text: task.data,
     ai_classification: task.ai_output.classification,
     confidence: task.ai_output.confidence,
     human_reviewed: task.human_reviewed ? 'Yes' : 'No',
-    final_label: task.final_label,
+    // Provide a fallback so that final_label is always a string.
+    final_label: task.final_label ?? 'None',
     priority: task.priority,
     created_at: task.created_at,
   }));
 };
 
-const ReviewNeededTasksScreen = () => {
+const AssignedTasksScreen = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
@@ -203,4 +192,4 @@ const ReviewNeededTasksScreen = () => {
   );
 };
 
-export default ReviewNeededTasksScreen;
+export default AssignedTasksScreen;
