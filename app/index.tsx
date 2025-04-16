@@ -3,7 +3,7 @@ import {View, Text, Image, Animated, ActivityIndicator} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Button} from '@/components/ui/button';
 import {MemoryStorage} from '@/utils/storage';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '@/constants';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE} from '@/constants';
 import {useGlobalStore} from '@/context/store';
 import {AxiosClient} from '@/utils/axios';
 import {isAxiosError} from 'axios';
@@ -51,6 +51,11 @@ export default function SplashScreen() {
 						setIsLoggedIn(true);
 						storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
 						storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
+						const role = await storage.getItem(ROLE);
+
+						if (role === 'admin') {
+							return router.replace('/admin');
+						}
 						router.replace('/tasks/new');
 					}
 				} catch (error) {
