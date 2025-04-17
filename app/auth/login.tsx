@@ -67,7 +67,7 @@ export default function LoginScreen() {
 		console.log('Login response:', response.data);
         await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
         await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
-		await storage.setItem('user', response?.data?.user_data?.username)
+		await storage.setItem('user', response.data.user_data.username);
         setIsLoggedIn(true);
         if (response.data.user_data.is_admin) {
           router.replace('/admin');

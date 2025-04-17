@@ -1,15 +1,14 @@
 import { Tabs } from "expo-router"
 import TabBar from "@/components/ui/tab-bar"
-import { useAuth } from "@/utils/user/get-user";
-
+import { useGlobalStore } from "@/context/store";
+import { AuthGate } from "@/components/auth/auth-guard";
 
 export default function TabsLayout() {
-//   const { user } = useAuthStore()
-const { userRole } = useAuth();
-
-const isAdmin = userRole === "admin"
+const { role } = useGlobalStore();
+const isAdmin = role === "admin" 
 
   return (
+    <AuthGate>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -21,6 +20,7 @@ const isAdmin = userRole === "admin"
       {isAdmin ? <Tabs.Screen name="Assign" /> : <Tabs.Screen name="pending" />}
       <Tabs.Screen name="account" />
     </Tabs>
+    </AuthGate>
   )
 }
 

@@ -156,7 +156,7 @@ const PendingReviewsTasksScreen = () => {
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color="#F97316" />
       ) : error ? (
         <Text className="text-center text-red-600 mt-4">{error}</Text>
       ) : tasks.length === 0 ? (

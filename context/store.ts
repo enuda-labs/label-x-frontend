@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { GlobalState } from './store.types';
 
-export const useGlobalStore = create<GlobalState>(set => ({
+export const useGlobalStore = create<GlobalState>((set) => ({
   isLoggedIn: false,
-  setIsLoggedIn: isLoggedIn => set({ isLoggedIn }),
-}));
+  user: null,
+  role: null,
+  setIsLoggedIn: (value) => set({ isLoggedIn: value }),
+  setUser: (user) => set({ user }),
+  setRole: (role) => set({ role }),
+}))

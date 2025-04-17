@@ -1,7 +1,7 @@
 
 import { View, Text, TouchableOpacity } from "react-native"
 import { useRouter, usePathname } from "expo-router"
-import { Feather } from "@expo/vector-icons"
+import { Feather, MaterialIcons } from "@expo/vector-icons"
 import { cn } from "@/lib/cn"
 
 interface TabBarRole {
@@ -22,28 +22,28 @@ const TabBar = ({ isAdmin = false }: TabBarRole) => {
       {
         name: "Reviews",
         icon: "briefcase",
-        path: "/reviews",
+        path: "/(tabs)/reviews",
       },
     ]
 
     if (isAdmin) {
       baseTabs.push({
-        name: "Create",
+        name: "Assign",
         icon: "plus-circle",
-        path: "/Assign",
+        path: "/(tabs)/Assign",
       })
     } else {
       baseTabs.push({
         name: "Pending",
-        icon: "briefcase",
-        path: "/pending",
+        icon: "alert-circle",
+        path: "/(tabs)/pending",
       })
     }
 
     baseTabs.push({
       name: "History",
       icon: "user",
-      path: "/history",
+      path: "/(tabs)/history",
     })
 
     return baseTabs

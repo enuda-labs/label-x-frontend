@@ -86,14 +86,6 @@ const TaskHistoryScreen = () => {
     loadTasks();
   }, []);
 
-  const handleReviewPress = () => {
-    router.push('/review/reviews');
-  };
-
-  const handlePendingPress = () => {
-    router.push('/review/pending');
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View

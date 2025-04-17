@@ -3,11 +3,12 @@ import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import PageContainer from "@/components/ui/page-container";
 import { useRouter } from 'expo-router';
-import { useAuth } from "@/utils/user/get-user";
+//import { useAuth } from "@/utils/user/get-user";
+import { useGlobalStore } from "@/context/store";
 export default function ReviewerDashboard() {
   
   const router = useRouter();
-  const { userName } = useAuth();
+  const { user } = useGlobalStore();
   const [stats, setStats] = useState({
     available: 16,
     pending: 6,
@@ -29,7 +30,7 @@ export default function ReviewerDashboard() {
       <TouchableOpacity className="p-2">
           <Feather name='menu' size={24} color="#fff" />
         </TouchableOpacity>
-        <Text className="text-white text-xl font-bold">Welcome, {userName || 'Reviewer'} </Text>
+        <Text className="text-white text-xl font-bold">Welcome, {user|| 'Reviewer'} </Text>
        </View>
        <TouchableOpacity className="p-2" onPress={() => router.push('/')}>
           <Feather name='bell' size={24} color="#fff" />
