@@ -77,7 +77,7 @@ export default function LoginScreen() {
 				} else if (response.data.user_data.is_reviewer) {
 					storage.setItem(ROLE, 'reviewer');
 				}
-				router.replace('/tasks/new');
+				router.replace('/review/reviews');
 			}
 		} catch (error: any) {
 			console.log(error.response?.data);

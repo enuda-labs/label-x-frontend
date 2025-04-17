@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {View, Text, Image, Animated, ActivityIndicator} from 'react-native';
+import {View, Text,  Animated, ActivityIndicator} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Button} from '@/components/ui/button';
 import {MemoryStorage} from '@/utils/storage';
@@ -7,6 +7,7 @@ import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE} from '@/constants';
 import {useGlobalStore} from '@/context/store';
 import {AxiosClient} from '@/utils/axios';
 import {isAxiosError} from 'axios';
+import CustomSplashScreen from '@/components/ui/custom-splash-screen';
 
 interface AuthResponse {
 	status: string;
@@ -56,7 +57,7 @@ export default function SplashScreen() {
 						if (role === 'admin') {
 							return router.replace('/admin');
 						}
-						router.replace('/tasks/new');
+						router.replace('/review/reviews');
 					}
 				} catch (error) {
 					if (isAxiosError(error)) {
@@ -82,9 +83,10 @@ export default function SplashScreen() {
 
 	if (isLoading) {
 		return (
-			<View className="flex-1 bg-background justify-center items-center px-6">
-				<ActivityIndicator size="large" color="#F97316" />
-			</View>
+			<CustomSplashScreen />
+			// <View className="flex-1 bg-background justify-center items-center px-6">
+			// 	<ActivityIndicator size="large" color="#F97316" />
+			// </View>
 		);
 	}
 	return (
