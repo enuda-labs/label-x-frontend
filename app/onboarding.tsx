@@ -1,13 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, Animated, ActivityIndicator } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
-import { useGlobalStore } from '@/context/store';
-import { AxiosClient } from '@/utils/axios';
-import { isAxiosError } from 'axios';
-import CustomSplashScreen from '@/components/ui/custom-splash-screen';
 
 interface AuthResponse {
   status: string;
@@ -19,8 +13,6 @@ export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(50)).current;
-  const [isLoading, setIsLoading] = useState(true);
-  const { setIsLoggedIn } = useGlobalStore();
 
   useEffect(() => {
     Animated.parallel([
@@ -37,42 +29,6 @@ export default function SplashScreen() {
     ]).start();
   }, [fadeAnim, translateY]);
 
-  useEffect(() => {
-    const getLoggedInStatus = async () => {
-      const storage = new MemoryStorage();
-      const token = await storage.getItem(REFRESH_TOKEN_KEY);
-      if (token) {
-        try {
-          const axiosClient = new AxiosClient();
-          const response = await axiosClient.post<{ refresh: string }, AuthResponse>(
-            '/account/token/refresh/',
-            { refresh: token }
-          );
-          if (response.status === 200) {
-            setIsLoggedIn(true);
-            storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
-            storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
-            const role = await storage.getItem(ROLE);
-
-            if (role === 'admin') {
-              return router.replace('/admin');
-            }
-            router.replace('/review/reviews');
-          }
-        } catch (error) {
-          if (isAxiosError(error)) {
-            if (error.response?.status === 401) {
-              router.replace('/auth/login');
-            }
-          }
-        }
-      }
-      setIsLoading(false);
-    };
-
-    getLoggedInStatus();
-  }, []);
-
   const handleGetStarted = () => {
     router.replace('/auth/login');
   };
@@ -81,14 +37,6 @@ export default function SplashScreen() {
     router.push('/auth/register');
   };
 
-  if (isLoading) {
-    return (
-      <CustomSplashScreen />
-      // <View className="flex-1 bg-background justify-center items-center px-6">
-      // 	<ActivityIndicator size="large" color="#F97316" />
-      // </View>
-    );
-  }
   return (
     <View className="flex-1 bg-background justify-center items-center px-6">
       <Animated.View

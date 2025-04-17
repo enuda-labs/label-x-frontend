@@ -64,8 +64,10 @@ export default function LoginScreen() {
       });
 
       if (response.status === 200) {
+        console.log('Login response:', response.data);
         await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
         await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
+        await storage.setItem('user', response.data.user_data.username);
         setIsLoggedIn(true);
         if (response.data.user_data.is_admin) {
           router.replace('/admin');
@@ -74,10 +76,10 @@ export default function LoginScreen() {
         } else if (response.data.user_data.is_reviewer) {
           storage.setItem(ROLE, 'reviewer');
         }
-        router.replace('/review/reviews');
+        router.replace('/');
       }
     } catch (error: any) {
-      console.log(error.response?.data);
+      // console.log(error.response?.data);
       if (isAxiosError(error)) {
         setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
       } else {

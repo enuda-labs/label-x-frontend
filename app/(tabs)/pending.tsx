@@ -145,14 +145,16 @@ const PendingReviewsTasksScreen = () => {
           <Pressable onPress={handleBackNavigation}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
           </Pressable>
-          <Text className="ml-3 text-xl text-white font-semibold">📋 My Pending Reviews</Text>
+          <Text className=" flex-1 text-center text-xl text-white font-semibold">
+            📋 My Pending Reviews
+          </Text>
         </View>
-        <View className="flex-row items-center">
+        {/* <View className="flex-row items-center">
           <TouchableOpacity onPress={handleAssignedPress}>
             <MaterialCommunityIcons name="menu" size={24} color="#FFF" />
           </TouchableOpacity>
           <Text className="ml-3 text-xl text-white font-semibold">📋 Assigned To Me</Text>
-        </View>
+        </View> */}
       </View>
 
       {loading ? (

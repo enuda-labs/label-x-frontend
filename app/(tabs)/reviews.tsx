@@ -9,36 +9,9 @@ import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
 import { ReviewTask } from '../../components/types/review-task';
 
-// Define the RawTask type locally
-interface RawTask {
-  id: number;
-  serial_no: string;
-  task_type: string;
-  data: string;
-  ai_output: {
-    text: string;
-    classification: string;
-    confidence: number;
-    requires_human_review: boolean;
-    human_review: {
-      correction: string | null;
-      justification: string | null;
-    };
-  };
-  predicted_label: string;
-  human_reviewed: boolean;
-  final_label: string | null;
-  processing_status: string;
-  assigned_to: number;
-  created_at: string;
-  updated_at: string;
-  priority: string;
-  group: number;
-}
-
 const storage = new MemoryStorage();
 
-const redirectToLogin = () => {
+const redirectToLogin = (): void => {
   Alert.alert('Session Expired', 'Please log in again.');
 };
 
@@ -53,12 +26,14 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
       },
       body: JSON.stringify({ refresh: refreshToken }),
     });
+
     if (!refreshResponse.ok) {
       const errorResponse = await refreshResponse.json();
       console.error('Error refreshing token:', errorResponse);
       redirectToLogin();
       return null;
     }
+
     const refreshedTokens = await refreshResponse.json();
     return refreshedTokens.access;
   } catch (error) {
@@ -68,11 +43,11 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
   }
 };
 
-const fetchAssignedTasks = async (
+const fetchReviewTasks = async (
   accessToken: string,
   refreshToken: string
-): Promise<RawTask[]> => {
-  const tasksUrl = `${BASE_API_URL}/tasks/assigned-task`;
+): Promise<ReviewTask[]> => {
+  const tasksUrl = `${BASE_API_URL}/tasks/review-needed/`;
   try {
     const response = await fetch(tasksUrl, {
       method: 'GET',
@@ -81,70 +56,102 @@ const fetchAssignedTasks = async (
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
     if (response.status === 401) {
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
-        return fetchAssignedTasks(newAccessToken, refreshToken);
+        return fetchReviewTasks(newAccessToken, refreshToken);
       } else {
         return [];
       }
     }
-    const tasks = await response.json();
+
+    const jsonData = await response.json();
+    // Ensure we extract an array: if jsonData is not an array, use jsonData.tasks (or another key) if available.
+    const tasks: ReviewTask[] = Array.isArray(jsonData) ? jsonData : jsonData.tasks || [];
+
     return tasks;
   } catch (error) {
-    console.error('Error fetching assigned tasks:', error);
+    console.error('Error fetching review tasks:', error);
     return [];
   }
 };
 
-const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
-  return tasks.map(task => ({
-    id: task.id.toString(),
-    serial_no: task.serial_no,
-    text: task.data,
-    ai_classification: task.ai_output.classification,
-    confidence: task.ai_output.confidence,
-    human_reviewed: task.human_reviewed ? 'Yes' : 'No',
-    // Provide a fallback so that final_label is always a string.
-    final_label: task.final_label ?? 'None',
-    priority: task.priority,
-    created_at: task.created_at,
-  }));
+const assignTaskToMe = async (
+  taskId: string,
+  accessToken: string,
+  refreshToken: string
+): Promise<boolean> => {
+  const assignUrl = `${BASE_API_URL}/tasks/assign-to-me/`;
+  try {
+    const response = await fetch(assignUrl, {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ task_id: taskId }),
+    });
+
+    if (response.status === 401) {
+      const newAccessToken = await refreshAccessToken(refreshToken);
+      if (newAccessToken) {
+        return assignTaskToMe(taskId, newAccessToken, refreshToken);
+      }
+    }
+
+    const result = await response.json();
+    if (result.status === 'success') {
+      Alert.alert('Success', result.message || 'Task assigned to you!');
+      return true;
+    } else if (response.status === 400 || response.status === 401) {
+      Alert.alert('Error', result.message || 'Failed to assign task. Please try again.');
+      return false;
+    } else {
+      Alert.alert('Error', result.message || 'Failed to assign task.');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error assigning task:', error);
+    Alert.alert('Error', 'An unexpected error occurred while assigning the task.');
+    return false;
+  }
 };
 
-const AssignedTasksScreen = () => {
+const ReviewNeededTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
-    const loadAssignedTasks = async () => {
+    const loadTasks = async () => {
       const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
       const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
 
       if (accessToken && refreshToken) {
-        const fetchedRawTasks = await fetchAssignedTasks(accessToken, refreshToken);
-        // Normalize tasks before setting state
-        const normalized = normalizeTasks(fetchedRawTasks);
-        setTasks(normalized);
+        const fetchedTasks = await fetchReviewTasks(accessToken, refreshToken);
+        setTasks(fetchedTasks);
       } else {
         redirectToLogin();
       }
       setLoading(false);
     };
 
-    loadAssignedTasks();
+    loadTasks();
   }, []);
 
-  const handleSubmitForReview = (taskId: string) => {
-    router.push(`/review/submit?taskId=${taskId}`);
-  };
-
-  const handleBackNavigation = () => {
-    if (router.canGoBack()) {
-      router.back();
+  const handleAssign = async (taskId: string): Promise<void> => {
+    const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
+    const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
+    if (accessToken && refreshToken) {
+      const assigned = await assignTaskToMe(taskId, accessToken, refreshToken);
+      if (assigned) {
+        const updatedTasks = await fetchReviewTasks(accessToken, refreshToken);
+        setTasks(updatedTasks);
+      }
     } else {
-      router.push('/review/pending');
+      redirectToLogin();
     }
   };
 
@@ -159,11 +166,11 @@ const AssignedTasksScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 py-4 border-b border-border">
-        <TouchableOpacity onPress={handleBackNavigation} className="mr-4">
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text className="text-xl flex-1 font-bold text-center text-foreground">
-          📝 Assigned Tasks
+          📝 Review Needed Tasks
         </Text>
       </View>
 
@@ -178,17 +185,15 @@ const AssignedTasksScreen = () => {
             </Text>
             <Text className="mb-1 text-foreground">Confidence: {task.confidence}</Text>
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
-            <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
+            <Text className="mb-1 text-foreground">Final Label: {task.final_label}</Text>
             <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
-            <Text className="mb-1 text-foreground">
-              Created At: {new Date(task.created_at).toLocaleString()}
-            </Text>
+            <Text className="mb-1 text-foreground">Created At: {task.created_at}</Text>
             <TouchableOpacity
-              onPress={() => handleSubmitForReview(task.id)}
+              onPress={() => handleAssign(task.id)}
               style={{ backgroundColor: '#F97316' }}
               className="mt-2 self-start px-3 py-2 rounded"
             >
-              <Text className="text-white font-medium">Review</Text>
+              <Text className="text-white font-medium">Assign to Me</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -197,4 +202,4 @@ const AssignedTasksScreen = () => {
   );
 };
 
-export default AssignedTasksScreen;
+export default ReviewNeededTasksScreen;
