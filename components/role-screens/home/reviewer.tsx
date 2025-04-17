@@ -32,7 +32,7 @@ export default function ReviewerDashboard() {
         </TouchableOpacity>
         <Text className="text-white text-xl font-bold">Welcome, {user|| 'Reviewer'} </Text>
        </View>
-       <TouchableOpacity className="p-2" onPress={() => router.push('/')}>
+       <TouchableOpacity className="p-2" onPress={() => router.push('/auth/login')}>
           <Feather name='bell' size={24} color="#fff" />
           {/* <NotificationBadge/> */}
         </TouchableOpacity>

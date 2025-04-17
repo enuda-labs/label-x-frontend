@@ -79,7 +79,7 @@ export default function LoginScreen() {
         router.replace('/');
       }
     } catch (error: any) {
-      console.log(error.response?.data);
+     // console.log(error.response?.data);
       if (isAxiosError(error)) {
         setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
       } else {
