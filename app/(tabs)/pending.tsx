@@ -1,82 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
-import { BASE_API_URL } from '@/constants/env-vars';
 import { ReviewTask } from '../../components/types/review-task';
+import { isAxiosError } from 'axios';
+import { fetchPendingReviews } from '@/services/apis/review';
 
-const storage = new MemoryStorage();
-
-const redirectToLogin = () => {
-  Alert.alert('Session Expired', 'Please log in again.');
-};
-
-const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
+const fetchReviews = async (): Promise<ReviewTask[]> => {
   try {
-    const res = await fetch(`${BASE_API_URL}/account/token/refresh/`, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refresh: refreshToken }),
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      console.error('Failed to refresh token:', error);
-      redirectToLogin();
-      return null;
-    }
-
-    const data = await res.json();
-    const newAccessToken = data.access;
-
-    await storage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
-    return newAccessToken;
-  } catch (error) {
-    console.error('Token refresh error:', error);
-    redirectToLogin();
-    return null;
-  }
-};
-
-const fetchPendingReviews = async (
-  accessToken: string,
-  refreshToken: string
-): Promise<ReviewTask[]> => {
-  try {
-    const res = await fetch(`${BASE_API_URL}/tasks/my-pending-reviews/`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (res.status === 401) {
-      const newAccessToken = await refreshAccessToken(refreshToken);
-      if (newAccessToken) {
-        return fetchPendingReviews(newAccessToken, refreshToken);
-      } else {
-        throw new Error('Unauthorized');
-      }
-    }
-
-    const tasks = await res.json();
-
+    const tasks = await fetchPendingReviews();
     return tasks.map((task: any) => ({
       id: task.id.toString(),
       serial_no: task.serial_no,
@@ -102,22 +35,14 @@ const PendingReviewsTasksScreen = () => {
 
   useEffect(() => {
     const loadTasks = async () => {
-      setLoading(true);
       try {
-        const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
-        const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-
-        if (!accessToken || !refreshToken) {
-          setError('Authentication error. Please log in again.');
-          redirectToLogin();
-          return;
+        const fetchedTasks = await fetchReviews();
+        setTasks(fetchedTasks);
+      } catch (error) {
+        if (isAxiosError(error)) {
+          return setError(error.response?.data || 'Failed to load tasks');
         }
-
-        const result = await fetchPendingReviews(accessToken, refreshToken);
-        setTasks(result);
-      } catch (err) {
         setError('Failed to load tasks.');
-        console.error(err);
       } finally {
         setLoading(false);
       }

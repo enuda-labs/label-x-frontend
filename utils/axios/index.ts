@@ -1,17 +1,16 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../constants';
 import { BASE_API_URL } from '../../constants/env-vars';
 import { MemoryStorage } from '../storage';
 import { StorageInterface } from '../storage/storage.types';
 import { AxiosClientProps } from './axios.types';
-import { useGlobalStore } from '../../context/store';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 export class AxiosClient {
   _axiosClient: AxiosInstance;
   _storageClass: StorageInterface;
-  _onAccessTokenExpire?: () => void;
+  _onAccessTokenExpire?: (error: AxiosError) => void;
 
   constructor({ baseUrl, axiosClient, storageClass, onAccessTokenExpire }: AxiosClientProps = {}) {
     this._axiosClient = axiosClient || axios.create({});
@@ -23,11 +22,36 @@ export class AxiosClient {
     this.mountInterceptors();
   }
 
-  private async defaultOnAccessTokenExpire() {
-    const isLoggedIn = useGlobalStore.getState().isLoggedIn;
-    if (isLoggedIn) {
+  private async defaultOnAccessTokenExpire(error: AxiosError) {
+    try {
+      const refreshTokenResponse = await this._axiosClient.post('/account/token/refresh/', {
+        refresh: await this._storageClass.getItem(REFRESH_TOKEN_KEY),
+      });
+
+      if (refreshTokenResponse.status === 200) {
+        const { access, refresh } = refreshTokenResponse.data;
+        await this._storageClass.setItem(ACCESS_TOKEN_KEY, access);
+        await this._storageClass.setItem(REFRESH_TOKEN_KEY, refresh);
+        try {
+          const retryConfig = { ...error.config };
+          const headers = new axios.AxiosHeaders(retryConfig.headers);
+          headers.set(
+            'Authorization',
+            `Bearer ${await this._storageClass.getItem(ACCESS_TOKEN_KEY)}`
+          );
+          retryConfig.headers = headers;
+          return this._axiosClient.request(retryConfig);
+        } catch (retryError) {
+          console.error('Error retrying request:', retryError);
+          return Promise.reject(retryError);
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
       const storage = new MemoryStorage();
       await storage.removeItem(ACCESS_TOKEN_KEY);
+      Alert.alert('Session Expired', 'Please log in again.');
+      router.replace('/auth/login');
     }
   }
 
@@ -51,11 +75,8 @@ export class AxiosClient {
         if (error.config && error?.response?.status === 401) {
           const tokenExists = (await this._storageClass.getItem(ACCESS_TOKEN_KEY)) != null;
           if (tokenExists) {
-            router.replace('/auth/login');
-            await this._storageClass.removeItem(ACCESS_TOKEN_KEY);
-            await this._storageClass.removeItem(REFRESH_TOKEN_KEY);
+            this._onAccessTokenExpire?.(error);
           }
-          this._onAccessTokenExpire?.();
         }
 
         return Promise.reject(error);

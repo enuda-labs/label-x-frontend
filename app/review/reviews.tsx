@@ -3,121 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
-import { BASE_API_URL } from '@/constants/env-vars';
 import { ReviewTask } from '../../components/types/review-task';
-
-const storage = new MemoryStorage();
-
-const redirectToLogin = (): void => {
-  Alert.alert('Session Expired', 'Please log in again.');
-};
-
-const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
-  const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
-  try {
-    const refreshResponse = await fetch(refreshUrl, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refresh: refreshToken }),
-    });
-
-    if (!refreshResponse.ok) {
-      const errorResponse = await refreshResponse.json();
-      console.error('Error refreshing token:', errorResponse);
-      redirectToLogin();
-      return null;
-    }
-
-    const refreshedTokens = await refreshResponse.json();
-    return refreshedTokens.access;
-  } catch (error) {
-    console.error('Refresh token request failed:', error);
-    redirectToLogin();
-    return null;
-  }
-};
-
-const fetchReviewTasks = async (
-  accessToken: string,
-  refreshToken: string
-): Promise<ReviewTask[]> => {
-  const tasksUrl = `${BASE_API_URL}/tasks/review-needed/`;
-  try {
-    const response = await fetch(tasksUrl, {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (response.status === 401) {
-      const newAccessToken = await refreshAccessToken(refreshToken);
-      if (newAccessToken) {
-        return fetchReviewTasks(newAccessToken, refreshToken);
-      } else {
-        return [];
-      }
-    }
-
-    const jsonData = await response.json();
-    // Ensure we extract an array: if jsonData is not an array, use jsonData.tasks (or another key) if available.
-    const tasks: ReviewTask[] = Array.isArray(jsonData) ? jsonData : jsonData.tasks || [];
-
-    return tasks;
-  } catch (error) {
-    console.error('Error fetching review tasks:', error);
-    return [];
-  }
-};
-
-const assignTaskToMe = async (
-  taskId: string,
-  accessToken: string,
-  refreshToken: string
-): Promise<boolean> => {
-  const assignUrl = `${BASE_API_URL}/tasks/assign-to-me/`;
-  try {
-    const response = await fetch(assignUrl, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ task_id: taskId }),
-    });
-
-    if (response.status === 401) {
-      const newAccessToken = await refreshAccessToken(refreshToken);
-      if (newAccessToken) {
-        return assignTaskToMe(taskId, newAccessToken, refreshToken);
-      }
-    }
-
-    const result = await response.json();
-    if (result.status === 'success') {
-      Alert.alert('Success', result.message || 'Task assigned to you!');
-      return true;
-    } else if (response.status === 400 || response.status === 401) {
-      Alert.alert('Error', result.message || 'Failed to assign task. Please try again.');
-      return false;
-    } else {
-      Alert.alert('Error', result.message || 'Failed to assign task.');
-      return false;
-    }
-  } catch (error) {
-    console.error('Error assigning task:', error);
-    Alert.alert('Error', 'An unexpected error occurred while assigning the task.');
-    return false;
-  }
-};
+import { assignTask, fetchReviewTasks } from '@/services/apis/review';
 
 const ReviewNeededTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
@@ -126,15 +13,9 @@ const ReviewNeededTasksScreen: React.FC = () => {
 
   useEffect(() => {
     const loadTasks = async () => {
-      const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
-      const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
+      const fetchedTasks = await fetchReviewTasks();
+      setTasks(fetchedTasks);
 
-      if (accessToken && refreshToken) {
-        const fetchedTasks = await fetchReviewTasks(accessToken, refreshToken);
-        setTasks(fetchedTasks);
-      } else {
-        redirectToLogin();
-      }
       setLoading(false);
     };
 
@@ -142,16 +23,25 @@ const ReviewNeededTasksScreen: React.FC = () => {
   }, []);
 
   const handleAssign = async (taskId: string): Promise<void> => {
-    const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
-    const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-    if (accessToken && refreshToken) {
-      const assigned = await assignTaskToMe(taskId, accessToken, refreshToken);
-      if (assigned) {
-        const updatedTasks = await fetchReviewTasks(accessToken, refreshToken);
-        setTasks(updatedTasks);
+    const assignTaskToMe = async (): Promise<boolean> => {
+      try {
+        const result = await assignTask(taskId);
+        if (result.status === 'success') {
+          Alert.alert('Success', result.message || 'Task assigned to you!');
+          return true;
+        }
+        Alert.alert('Error', result.message || 'Failed to assign task.');
+        return false;
+      } catch (error) {
+        console.error('Error assigning task:', error);
+        Alert.alert('Error', 'An unexpected error occurred while assigning the task.');
+        return false;
       }
-    } else {
-      redirectToLogin();
+    };
+    const assigned = await assignTaskToMe();
+    if (assigned) {
+      const updatedTasks = await fetchReviewTasks();
+      setTasks(updatedTasks);
     }
   };
 
