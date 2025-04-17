@@ -1,4 +1,4 @@
 export interface GlobalState {
-	isLoggedIn: boolean;
-	setIsLoggedIn: (isLoggedIn: boolean) => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }

@@ -68,7 +68,10 @@ const refreshAccessToken = async (refreshToken: string): Promise<string | null> 
   }
 };
 
-const fetchAssignedTasks = async (accessToken: string, refreshToken: string): Promise<RawTask[]> => {
+const fetchAssignedTasks = async (
+  accessToken: string,
+  refreshToken: string
+): Promise<RawTask[]> => {
   const tasksUrl = `${BASE_API_URL}/tasks/assigned-task`;
   try {
     const response = await fetch(tasksUrl, {
@@ -95,7 +98,7 @@ const fetchAssignedTasks = async (accessToken: string, refreshToken: string): Pr
 };
 
 const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
-  return tasks.map((task) => ({
+  return tasks.map(task => ({
     id: task.id.toString(),
     serial_no: task.serial_no,
     text: task.data,
@@ -118,7 +121,7 @@ const AssignedTasksScreen = () => {
     const loadAssignedTasks = async () => {
       const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
       const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-  
+
       if (accessToken && refreshToken) {
         const fetchedRawTasks = await fetchAssignedTasks(accessToken, refreshToken);
         // Normalize tasks before setting state
@@ -129,7 +132,7 @@ const AssignedTasksScreen = () => {
       }
       setLoading(false);
     };
-  
+
     loadAssignedTasks();
   }, []);
 
@@ -165,12 +168,14 @@ const AssignedTasksScreen = () => {
       </View>
 
       <ScrollView className="p-4">
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
             <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
             <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
             <Text className="mb-1 text-foreground">Text: {task.text}</Text>
-            <Text className="mb-1 text-foreground">AI Classification: {task.ai_classification}</Text>
+            <Text className="mb-1 text-foreground">
+              AI Classification: {task.ai_classification}
+            </Text>
             <Text className="mb-1 text-foreground">Confidence: {task.confidence}</Text>
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
             <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
