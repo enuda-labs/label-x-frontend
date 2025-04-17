@@ -57,7 +57,7 @@ export default function SplashScreen() {
             if (role === 'admin') {
               return router.replace('/admin');
             }
-            router.replace('/review/reviews');
+            router.replace('/(tabs)');
           }
         } catch (error) {
           if (isAxiosError(error)) {

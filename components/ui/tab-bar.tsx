@@ -1,71 +1,78 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { cn } from '@/lib/cn';
-import { useRouter, usePathname } from 'expo-router';
 
-type TabItem = {
-  name: string;
-  href: string;
-  icon: string;
-  label: string;
-};
+import { View, Text, TouchableOpacity } from "react-native"
+import { useRouter, usePathname } from "expo-router"
+import { Feather } from "@expo/vector-icons"
+import { cn } from "@/lib/cn"
 
-type TabBarProps = {
-  tabs: TabItem[];
-  className?: string;
-};
+interface TabBarRole {
+  isAdmin?: boolean
+}
 
-export const TabBar = ({ tabs, className }: TabBarProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
+const TabBar = ({ isAdmin = false }: TabBarRole) => {
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const handleNavigation = (href: string) => {
-    router.push(href);
-  };
+  const getTabs = () => {
+    const baseTabs = [
+      {
+        name: "Home",
+        icon: "home",
+        path: "/",
+      },
+      {
+        name: "Reviews",
+        icon: "briefcase",
+        path: "/reviews",
+      },
+    ]
+
+    if (isAdmin) {
+      baseTabs.push({
+        name: "Create",
+        icon: "plus-circle",
+        path: "/Assign",
+      })
+    } else {
+      baseTabs.push({
+        name: "Pending",
+        icon: "briefcase",
+        path: "/pending",
+      })
+    }
+
+    baseTabs.push({
+      name: "History",
+      icon: "user",
+      path: "/history",
+    })
+
+    return baseTabs
+  }
+
+  const tabs = getTabs()
+
+  const isActive = (path: string) => {
+    if (path === "/" && pathname === "/") return true
+    if (path !== "/" && pathname.startsWith(path)) return true
+    return false
+  }
 
   return (
-    <View
-      className={cn(
-        'flex flex-row justify-around items-center bg-background border-t border-border pb-6 pt-2 px-4',
-        'glass-effect fixed bottom-0 left-0 right-0 z-50',
-        className
-      )}
-    >
-      {tabs.map(tab => {
-        const isActive = pathname === tab.href;
-
+    <View className="flex-row justify-between items-center border-t border-gray-200 bg-background pt-2">
+      {tabs.map((tab) => {
+        const active = isActive(tab.path)
         return (
-          <TouchableOpacity
-            key={tab.name}
-            onPress={() => handleNavigation(tab.href)}
-            className={cn(
-              'flex-1 items-center justify-center py-2',
-              isActive ? 'text-primary' : 'text-muted-foreground'
-            )}
-            activeOpacity={0.7}
-          >
-            <View className="flex items-center space-y-1">
-              {/* This would be the actual icon component */}
-              <View
-                className={cn(
-                  'h-6 w-6 flex items-center justify-center',
-                  isActive ? 'text-primary' : 'text-muted-foreground'
-                )}
-              >
-                <Text>{tab.icon}</Text>
-              </View>
-              <Text
-                className={cn(
-                  'text-xs font-medium',
-                  isActive ? 'text-primary' : 'text-muted-foreground'
-                )}
-              >
-                {tab.label}
-              </Text>
-            </View>
+          <TouchableOpacity key={tab.name} className="flex-1 pt-2 pb-7 items-center" onPress={() => router.push(tab.path as any)}>
+            <Feather name={tab.icon as any} size={24} color={active ? "#F97316" : "#6B7280"} />
+            <Text className={cn("text-sm mt-1", active ? "text-primary font-medium" : "text-gray-500")}>
+              {tab.name}
+            </Text>
           </TouchableOpacity>
-        );
+        )
       })}
     </View>
-  );
-};
+  )
+}
+
+export default TabBar
+
