@@ -8,24 +8,84 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
+import { AxiosClient } from '@/utils/axios';
+import { isAxiosError } from 'axios';
+import { MemoryStorage } from '@/utils/storage';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
+import { useGlobalStore } from '@/context/store';
+
+interface LoginBody {
+  username: string;
+  password: string;
+}
+
+interface UserData {
+  id: number;
+  username: string;
+  email: string;
+  is_reviewer: boolean;
+  is_admin: boolean;
+}
+
+interface LoginResponse {
+  refresh: string;
+  access: string;
+  user_data: UserData;
+}
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('');
+  const params = useLocalSearchParams();
+  const [username, setUsername] = useState((params?.username as string) || '');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const { setIsLoggedIn } = useGlobalStore();
   const router = useRouter();
 
   const handleLogin = async () => {
-    setIsLoading(true);
+    try {
+      if (!username || !password) {
+        return setErrorMessage('Please enter username and password');
+      }
+      setIsLoading(true);
+      setErrorMessage('');
+      const axiosClient = new AxiosClient();
+      const storage = new MemoryStorage();
+      storage.removeItem(ACCESS_TOKEN_KEY);
+      storage.removeItem(REFRESH_TOKEN_KEY);
 
-    setTimeout(() => {
+      const response = await axiosClient.post<LoginBody, LoginResponse>('/account/login/', {
+        username,
+        password,
+      });
+
+      if (response.status === 200) {
+        await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
+        await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
+        setIsLoggedIn(true);
+        if (response.data.user_data.is_admin) {
+          router.replace('/admin');
+          storage.setItem(ROLE, 'admin');
+          return;
+        } else if (response.data.user_data.is_reviewer) {
+          storage.setItem(ROLE, 'reviewer');
+        }
+        router.replace('/review/reviews');
+      }
+    } catch (error: any) {
+      console.log(error.response?.data);
+      if (isAxiosError(error)) {
+        setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
+      } else {
+        setErrorMessage(error.message || 'Unexpected error occurred');
+      }
+    } finally {
       setIsLoading(false);
-      router.replace('/tasks/new');
-    }, 1500);
+    }
   };
 
   return (
@@ -75,6 +135,7 @@ export default function LoginScreen() {
                 </TouchableOpacity>
               </View>
             </View>
+            <Text className="text-red-500">{errorMessage}</Text>
 
             <Button
               onPress={handleLogin}

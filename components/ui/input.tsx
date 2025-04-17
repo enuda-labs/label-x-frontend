@@ -50,7 +50,7 @@ export const Input = ({
           secureTextEntry={isPasswordVisible}
           className={cn(
             'w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground pr-12',
-            'focus:border-primary focus:ring-1 focus:ring-primary',
+            'focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-foreground',
             error && 'border-destructive',
             inputClassName
           )}

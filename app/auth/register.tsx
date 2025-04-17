@@ -12,21 +12,64 @@ import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
+import { AxiosClient } from '@/utils/axios';
+import { isAxiosError } from 'axios';
+
+interface RegisterBody {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface UserData {
+  id: number;
+  username: string;
+  email: string;
+}
+
+interface RegisterResponse {
+  status: 'success' | 'error';
+  user_data: UserData;
+}
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    setIsLoading(true);
+    try {
+      if (!name || !password || !email) {
+        return setErrorMessage('Please input all fields');
+      }
+      setIsLoading(true);
+      setErrorMessage('');
+      const axiosClient = new AxiosClient();
 
-    setTimeout(() => {
+      const response = await axiosClient.post<RegisterBody, RegisterResponse>(
+        '/account/register/',
+        {
+          username: name,
+          email,
+          password,
+        }
+      );
+      if (response.status === 201) {
+        router.replace(`/auth/login?username=${name}`);
+      }
+    } catch (error: any) {
+      console.log(error.response?.data);
+      if (isAxiosError(error)) {
+        setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
+      } else {
+        setErrorMessage(error.message || 'Unexpected error occurred');
+      }
+    } finally {
       setIsLoading(false);
-      router.replace('/');
-    }, 1500);
+    }
   };
 
   return (
@@ -79,6 +122,8 @@ export default function RegisterScreen() {
                 secureTextEntry
               />
             </View>
+
+            <Text className="text-red-500">{errorMessage}</Text>
 
             <Button
               onPress={handleRegister}
