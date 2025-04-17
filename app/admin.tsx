@@ -53,12 +53,12 @@ const Admin = () => {
   return (
     <SafeAreaView className="flex-1 bg-background p-4">
       <View className="flex-row justify-between items-center mb-10">
-        <Text className="text-white font-semibold text-2xl">Projects</Text>
+        <Text className="text-white font-semibold text-2xl"> All Projects</Text>
         <TouchableOpacity
-          onPress={() => router.push('/tasks/new')}
+          onPress={() => router.push('/auth/login')}
           className="bg-orange-500 p-4 rounded-lg"
         >
-          <Text className="text-white text-center font-semibold">Switch to User</Text>
+          <Text className="text-white text-center font-semibold">Logout</Text>
         </TouchableOpacity>
       </View>
       {loading && (

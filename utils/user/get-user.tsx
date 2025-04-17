@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { MemoryStorage } from "../storage";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from "@/constants";
-import { useGlobalStore } from "@/context/store";
-import { AxiosClient } from "@/utils/axios";
-import { isAxiosError } from "axios";
-import { useRouter } from "expo-router";
+import { useEffect, useState } from 'react';
+import { MemoryStorage } from '../storage';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
+import { useGlobalStore } from '@/context/store';
+import { AxiosClient } from '@/utils/axios';
+import { isAxiosError } from 'axios';
+import { useRouter } from 'expo-router';
 
 interface AuthResponse {
   status: string;
@@ -27,10 +27,10 @@ export const useAuth = () => {
       if (token) {
         try {
           const axiosClient = new AxiosClient();
-          const response = await axiosClient.post<
-            { refresh: string },
-            AuthResponse
-          >("/account/token/refresh/", { refresh: token });
+          const response = await axiosClient.post<{ refresh: string }, AuthResponse>(
+            '/account/token/refresh/',
+            { refresh: token }
+          );
 
           if (response.status === 200) {
             setIsLoggedIn(true);
@@ -40,17 +40,17 @@ export const useAuth = () => {
             const role = await storage.getItem(ROLE);
             const username = await storage.getItem('user');
             setUserRole(role);
-            setUserName(username)
+            setUserName(username);
 
-            if (role === "admin") {
-              return router.replace("/admin");
+            if (role === 'admin') {
+              return router.replace('/admin');
             }
-            router.replace("/");
+            router.replace('/');
           }
         } catch (error) {
           if (isAxiosError(error)) {
             if (error.response?.status === 401) {
-              router.replace("/auth/login");
+              router.replace('/auth/login');
             }
           }
         }

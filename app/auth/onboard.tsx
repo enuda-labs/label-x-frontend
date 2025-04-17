@@ -13,7 +13,7 @@ export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(50)).current;
- 
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -29,8 +29,6 @@ export default function SplashScreen() {
     ]).start();
   }, [fadeAnim, translateY]);
 
-  
-
   const handleGetStarted = () => {
     router.replace('/auth/login');
   };
@@ -39,7 +37,6 @@ export default function SplashScreen() {
     router.push('/auth/register');
   };
 
- 
   return (
     <View className="flex-1 bg-background justify-center items-center px-6">
       <Animated.View
