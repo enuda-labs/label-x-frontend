@@ -87,6 +87,7 @@ const fetchAssignedTasks = async (accessToken: string, refreshToken: string): Pr
       }
     }
     const tasks = await response.json();
+    console.log(tasks)
     return tasks;
   } catch (error) {
     console.error('Error fetching assigned tasks:', error);
@@ -102,9 +103,10 @@ const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
     ai_classification: task.ai_output.classification,
     confidence: task.ai_output.confidence,
     human_reviewed: task.human_reviewed ? 'Yes' : 'No',
-    // Provide a fallback so that final_label is always a string.
     final_label: task.final_label ?? 'None',
     priority: task.priority,
+    assigned_to: task.assigned_to,
+    processing_status: task.processing_status,
     created_at: task.created_at,
   }));
 };
@@ -118,7 +120,7 @@ const AssignedTasksScreen = () => {
     const loadAssignedTasks = async () => {
       const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
       const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-  
+
       if (accessToken && refreshToken) {
         const fetchedRawTasks = await fetchAssignedTasks(accessToken, refreshToken);
         // Normalize tasks before setting state
@@ -129,7 +131,7 @@ const AssignedTasksScreen = () => {
       }
       setLoading(false);
     };
-  
+
     loadAssignedTasks();
   }, []);
 
@@ -175,6 +177,18 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
             <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
             <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
+            <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text>
+            <Text
+              className={`mb-1 font-medium ${task.processing_status === 'COMPLETED'
+                  ? 'text-green-500'
+                  : task.processing_status === 'ASSIGNED_REVIEWER'
+                    ? 'text-red-500'
+                    : 'text-foreground'
+                }`}
+            >
+              Processing Status: {task.processing_status}
+            </Text>
+
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
