@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { TextInput, View, Text, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { cn } from '@/lib/cn';
+import React, {useState} from 'react';
+import {TextInput, View, Text, TouchableOpacity} from 'react-native';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {cn} from '@/lib/cn';
 
 type InputProps = {
+
   label?: string;
   placeholder?: string;
   value: string;
@@ -21,22 +22,24 @@ type InputProps = {
     | 'decimal-pad';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   autoCorrect?: boolean;
+
 };
 
 export const Input = ({
-  label,
-  placeholder,
-  value,
-  onChangeText,
-  secureTextEntry = false,
-  error,
-  className,
-  inputClassName,
-  keyboardType = 'default',
-  autoCapitalize = 'none',
-  autoCorrect = false,
+	label,
+	placeholder,
+	value,
+	onChangeText,
+	secureTextEntry = false,
+	error,
+	className,
+	inputClassName,
+	keyboardType = 'default',
+	autoCapitalize = 'none',
+	autoCorrect = false,
 }: InputProps) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
+	const [isPasswordVisible, setIsPasswordVisible] = useState(secureTextEntry);
+
 
   return (
     <View className={cn('space-y-2 w-full', className)}>
@@ -76,4 +79,7 @@ export const Input = ({
       {error && <Text className="text-xs text-destructive">{error}</Text>}
     </View>
   );
+
+	
+
 };

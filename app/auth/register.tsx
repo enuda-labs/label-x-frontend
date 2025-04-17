@@ -12,21 +12,65 @@ import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
+import { AxiosClient } from '@/utils/axios';
+import { isAxiosError } from 'axios';
+
+interface RegisterBody {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface UserData {
+  id: number;
+  username: string;
+  email: string;
+}
+
+interface RegisterResponse {
+  status: 'success' | 'error';
+  user_data: UserData;
+}
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    setIsLoading(true);
+    try {
+      if (!name || !password || !email) {
+        return setErrorMessage('Please input all fields');
+      }
+      setIsLoading(true);
+      setErrorMessage('');
+      const axiosClient = new AxiosClient();
 
-    setTimeout(() => {
+      const response = await axiosClient.post<RegisterBody, RegisterResponse>(
+        '/account/register/',
+        {
+          username: name,
+          email,
+          password,
+        }
+      );
+
+      if (response.status === 201) {
+        router.replace(`/auth/login?username=${name}`);
+      }
+    } catch (error: any) {
+      console.log(error.response?.data);
+      if (isAxiosError(error)) {
+        setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
+      } else {
+        setErrorMessage(error.message || 'Unexpected error occurred');
+      }
+    } finally {
       setIsLoading(false);
-      router.replace('/');
-    }, 1500);
+    }
   };
 
   return (
@@ -39,11 +83,14 @@ export default function RegisterScreen() {
           contentContainerClassName="flex-grow justify-center px-6 py-12"
           keyboardShouldPersistTaps="handled"
         >
-          <TouchableOpacity onPress={() => router.back()} className="absolute top-10 left-4 z-10">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="absolute top-10 left-4 z-10"
+          >
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
 
-          <View className="animate-fade-in flex-col gap-y-6 w-full max-w-sm mx-auto ">
+          <View className="animate-fade-in flex-col gap-y-6 w-full max-w-sm mx-auto">
             <View className="flex-col gap-y-2 text-center">
               <Text className="text-3xl font-bold tracking-tight text-foreground">
                 Create an account
@@ -80,6 +127,10 @@ export default function RegisterScreen() {
               />
             </View>
 
+            {errorMessage ? (
+              <Text className="text-red-500">{errorMessage}</Text>
+            ) : null}
+
             <Button
               onPress={handleRegister}
               isLoading={isLoading}
@@ -90,7 +141,9 @@ export default function RegisterScreen() {
             </Button>
 
             <View className="flex-row justify-center space-x-1">
-              <Text className="text-muted-foreground text-sm">Already have an account?</Text>
+              <Text className="text-muted-foreground text-sm">
+                Already have an account?
+              </Text>
               <TouchableOpacity onPress={() => router.push('/auth/login')}>
                 <Text className="text-primary font-semibold ml-2">Sign in</Text>
               </TouchableOpacity>
