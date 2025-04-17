@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, View } from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  View,
+} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { MemoryStorage } from '@/utils/storage';
@@ -14,19 +22,19 @@ const SubmitReviewScreen = () => {
   const [justification, setJustification] = useState('');
   const [confidence, setConfidence] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(''); 
+  const [error, setError] = useState('');
 
   const validCorrections = ['Safe'];
 
   const router = useRouter();
 
   const submitReview = async () => {
-    setError(''); 
+    setError('');
 
     if (!taskId) {
       console.log('No taskId found.');
       const errorMessage = 'Task ID is missing.';
-      setError(errorMessage); 
+      setError(errorMessage);
       if (typeof window !== 'undefined') {
         window.alert(errorMessage);
       } else {
@@ -41,7 +49,7 @@ const SubmitReviewScreen = () => {
     if (!accessToken || !refreshToken) {
       console.log('No access token or refresh token found.');
       const errorMessage = 'Session Expired. Please log in again.';
-      setError(errorMessage); 
+      setError(errorMessage);
       if (typeof window !== 'undefined') {
         window.alert(errorMessage);
       } else {
@@ -53,7 +61,7 @@ const SubmitReviewScreen = () => {
     if (!validCorrections.includes(correction)) {
       console.log('Invalid correction choice:', correction);
       const errorMessage = 'The correction value is not valid.';
-      setError(errorMessage); 
+      setError(errorMessage);
       if (typeof window !== 'undefined') {
         window.alert(errorMessage);
       } else {
@@ -76,7 +84,7 @@ const SubmitReviewScreen = () => {
         method: 'POST',
         headers: {
           accept: 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
@@ -96,7 +104,7 @@ const SubmitReviewScreen = () => {
         if (result.errors) {
           console.error('Errors:', result.errors);
           const errorMessages = Object.values(result.errors).join('\n');
-          setError(errorMessages); 
+          setError(errorMessages);
           if (typeof window !== 'undefined') {
             window.alert(errorMessages);
           } else {
@@ -105,7 +113,7 @@ const SubmitReviewScreen = () => {
         } else {
           console.error('Error response:', result);
           const errorMessage = result.message || 'Failed to submit review';
-          setError(errorMessage); 
+          setError(errorMessage);
           if (typeof window !== 'undefined') {
             window.alert(errorMessage);
           } else {
@@ -116,7 +124,7 @@ const SubmitReviewScreen = () => {
     } catch (error) {
       console.error('Error submitting review:', error);
       const errorMessage = 'There was an error submitting the review';
-      setError(errorMessage); 
+      setError(errorMessage);
       if (typeof window !== 'undefined') {
         window.alert(errorMessage);
       } else {
@@ -128,8 +136,10 @@ const SubmitReviewScreen = () => {
   };
 
   return (
-    <SafeAreaView className='bg-background' style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 24, color:'#FFF', fontWeight: 'bold', textAlign: 'center' }}>Submit Review</Text>
+    <SafeAreaView className="bg-background" style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 24, color: '#FFF', fontWeight: 'bold', textAlign: 'center' }}>
+        Submit Review
+      </Text>
 
       {error ? (
         <View style={{ backgroundColor: 'red', padding: 10, borderRadius: 8, marginBottom: 16 }}>
@@ -138,24 +148,45 @@ const SubmitReviewScreen = () => {
       ) : null}
 
       <TextInput
-        style={{ height: 40, color: '#FFF', borderColor: 'gray', borderWidth: 1, marginBottom: 16, paddingLeft: 8 }}
+        style={{
+          height: 40,
+          color: '#FFF',
+          borderColor: 'gray',
+          borderWidth: 1,
+          marginBottom: 16,
+          paddingLeft: 8,
+        }}
         placeholder="Enter correction"
         value={correction}
         onChangeText={setCorrection}
       />
 
       <TextInput
-        style={{ height: 40, color: '#FFF', borderColor: 'gray', borderWidth: 1, marginBottom: 16, paddingLeft: 8 }}
+        style={{
+          height: 40,
+          color: '#FFF',
+          borderColor: 'gray',
+          borderWidth: 1,
+          marginBottom: 16,
+          paddingLeft: 8,
+        }}
         placeholder="Enter justification"
         value={justification}
         onChangeText={setJustification}
       />
 
       <TextInput
-        style={{ height: 40, color: '#FFF', borderColor: 'gray', borderWidth: 1, marginBottom: 16, paddingLeft: 8 }}
+        style={{
+          height: 40,
+          color: '#FFF',
+          borderColor: 'gray',
+          borderWidth: 1,
+          marginBottom: 16,
+          paddingLeft: 8,
+        }}
         placeholder="Enter confidence (0-1)"
         value={confidence.toString()}
-        onChangeText={(text) => setConfidence(Number(text))}
+        onChangeText={text => setConfidence(Number(text))}
         keyboardType="numeric"
       />
 

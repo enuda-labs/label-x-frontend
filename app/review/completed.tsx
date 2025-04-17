@@ -1,22 +1,27 @@
 import React from 'react';
 import { SafeAreaView, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router'; 
+import { useRouter } from 'expo-router';
 
 const CompletedReviewScreen = () => {
-  const router = useRouter(); 
+  const router = useRouter();
 
   const goBackHome = () => {
-    
-    router.push('/'); 
+    router.push('/');
   };
 
   return (
-    <SafeAreaView className='bg-background' style={styles.container}>
-      <Text className='text-white' style={styles.title}>Review Submitted!</Text>
-      <Text className='text-white' style={styles.message}>Your review has been successfully submitted. Thank you!</Text>
+    <SafeAreaView className="bg-background" style={styles.container}>
+      <Text className="text-white" style={styles.title}>
+        Review Submitted!
+      </Text>
+      <Text className="text-white" style={styles.message}>
+        Your review has been successfully submitted. Thank you!
+      </Text>
 
       <TouchableOpacity style={styles.button} onPress={goBackHome}>
-        <Text className='text-white' style={styles.buttonText}>Go Back to Home</Text>
+        <Text className="text-white" style={styles.buttonText}>
+          Go Back to Home
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

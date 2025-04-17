@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -22,9 +15,7 @@ const redirectToLogin = (): void => {
   Alert.alert('Session Expired', 'Please log in again.');
 };
 
-const refreshAccessToken = async (
-  refreshToken: string
-): Promise<string | null> => {
+const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
   const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
   try {
     const refreshResponse = await fetch(refreshUrl, {
@@ -77,10 +68,8 @@ const fetchReviewTasks = async (
 
     const jsonData = await response.json();
     // Ensure we extract an array: if jsonData is not an array, use jsonData.tasks (or another key) if available.
-    const tasks: ReviewTask[] = Array.isArray(jsonData) 
-      ? jsonData 
-      : jsonData.tasks || [];
-      
+    const tasks: ReviewTask[] = Array.isArray(jsonData) ? jsonData : jsonData.tasks || [];
+
     return tasks;
   } catch (error) {
     console.error('Error fetching review tasks:', error);
@@ -117,10 +106,7 @@ const assignTaskToMe = async (
       Alert.alert('Success', result.message || 'Task assigned to you!');
       return true;
     } else if (response.status === 400 || response.status === 401) {
-      Alert.alert(
-        'Error',
-        result.message || 'Failed to assign task. Please try again.'
-      );
+      Alert.alert('Error', result.message || 'Failed to assign task. Please try again.');
       return false;
     } else {
       Alert.alert('Error', result.message || 'Failed to assign task.');
@@ -128,10 +114,7 @@ const assignTaskToMe = async (
     }
   } catch (error) {
     console.error('Error assigning task:', error);
-    Alert.alert(
-      'Error',
-      'An unexpected error occurred while assigning the task.'
-    );
+    Alert.alert('Error', 'An unexpected error occurred while assigning the task.');
     return false;
   }
 };
@@ -196,38 +179,19 @@ const ReviewNeededTasksScreen: React.FC = () => {
       </View>
 
       <ScrollView className="p-4">
-        {tasks.map((task) => (
-          <View
-            key={task.id}
-            className="mb-4 p-4 border border-border rounded-lg bg-card"
-          >
-            <Text className="mb-1 font-bold text-foreground">
-              ID: {task.id}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Serial No: {task.serial_no}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Text: {task.text}
-            </Text>
+        {tasks.map(task => (
+          <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
+            <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
+            <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
+            <Text className="mb-1 text-foreground">Text: {task.text}</Text>
             <Text className="mb-1 text-foreground">
               AI Classification: {task.ai_classification}
             </Text>
-            <Text className="mb-1 text-foreground">
-              Confidence: {task.confidence}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Human Reviewed: {task.human_reviewed}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Final Label: {task.final_label}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Priority: {task.priority}
-            </Text>
-            <Text className="mb-1 text-foreground">
-              Created At: {task.created_at}
-            </Text>
+            <Text className="mb-1 text-foreground">Confidence: {task.confidence}</Text>
+            <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
+            <Text className="mb-1 text-foreground">Final Label: {task.final_label}</Text>
+            <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
+            <Text className="mb-1 text-foreground">Created At: {task.created_at}</Text>
             <TouchableOpacity
               onPress={() => handleAssign(task.id)}
               style={{ backgroundColor: '#F97316' }}

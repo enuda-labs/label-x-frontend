@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  ActivityIndicator, 
-  Alert, 
-  Pressable, 
-  TouchableOpacity 
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { MemoryStorage } from '@/utils/storage';  
+import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
 import { ReviewTask } from '../../components/types/review-task';
 
-const storage = new MemoryStorage(); 
+const storage = new MemoryStorage();
 
 const redirectToLogin = () => {
   Alert.alert('Session Expired', 'Please log in again.');
@@ -132,22 +132,22 @@ const PendingReviewsTasksScreen = () => {
 
   const handleBackNavigation = () => {
     if (router.canGoBack()) {
-      router.back(); 
+      router.back();
     } else {
-      router.push('/review/reviews'); 
+      router.push('/review/reviews');
     }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-background px-4 pt-4">
       <View className="flex-row justify-around items-center mb-4">
-        <View className='flex-row items-center'>
+        <View className="flex-row items-center">
           <Pressable onPress={handleBackNavigation}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
           </Pressable>
           <Text className="ml-3 text-xl text-white font-semibold">📋 My Pending Reviews</Text>
         </View>
-        <View className='flex-row items-center'>
+        <View className="flex-row items-center">
           <TouchableOpacity onPress={handleAssignedPress}>
             <MaterialCommunityIcons name="menu" size={24} color="#FFF" />
           </TouchableOpacity>
@@ -160,22 +160,28 @@ const PendingReviewsTasksScreen = () => {
       ) : error ? (
         <Text className="text-center text-red-600 mt-4">{error}</Text>
       ) : tasks.length === 0 ? (
-        <Text className="text-center text-gray-500 text-base mt-8">No pending reviews available.</Text>
+        <Text className="text-center text-gray-500 text-base mt-8">
+          No pending reviews available.
+        </Text>
       ) : (
         <ScrollView className="space-y-4">
-          {tasks.map((task) => (
+          {tasks.map(task => (
             <View
               key={task.id}
               className="bg-background p-4 rounded-xl shadow-sm border border-gray-200"
             >
-              <Text className="text-sm mb-1 text-white font-medium">Serial No: {task.serial_no}</Text>
+              <Text className="text-sm mb-1 text-white font-medium">
+                Serial No: {task.serial_no}
+              </Text>
               <Text className="text-sm mb-1 text-white">Text: {task.text}</Text>
               <Text className="text-sm mb-1 text-white">
                 AI Classification: {task.ai_classification}
               </Text>
               <Text className="text-sm mb-1 text-white">Confidence: {task.confidence}</Text>
               <Text className="text-sm mb-1 text-white">Human Reviewed: {task.human_reviewed}</Text>
-              <Text className="text-sm mb-1 text-white">Final Label: {task.final_label ?? 'N/A'}</Text>
+              <Text className="text-sm mb-1 text-white">
+                Final Label: {task.final_label ?? 'N/A'}
+              </Text>
               <Text className="text-sm mb-1 text-white">Priority: {task.priority}</Text>
               <Text className="text-sm text-white">Created At: {task.created_at}</Text>
             </View>

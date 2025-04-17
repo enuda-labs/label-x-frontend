@@ -3,10 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { MemoryStorage } from '@/utils/storage'; 
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants'; 
+import { MemoryStorage } from '@/utils/storage';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '../../constants/env-vars';
-
 
 // Define the Task interface
 interface Task {
@@ -22,7 +21,7 @@ const refreshAccessToken = async (refreshToken: string) => {
   const refreshResponse = await fetch(refreshUrl, {
     method: 'POST',
     headers: {
-      'accept': 'application/json',
+      accept: 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ refresh: refreshToken }),
@@ -31,8 +30,8 @@ const refreshAccessToken = async (refreshToken: string) => {
   if (!refreshResponse.ok) {
     const refreshError = await refreshResponse.json();
     console.error('Error refreshing token:', refreshError);
-    redirectToLogin(); 
-    return null; 
+    redirectToLogin();
+    return null;
   }
 
   const refreshedTokens = await refreshResponse.json();
@@ -45,8 +44,8 @@ const fetchTasks = async (accessToken: string, refreshToken: string) => {
     let response = await fetch(tasksUrl, {
       method: 'GET',
       headers: {
-        'accept': 'application/json',
-        'Authorization': `Bearer ${accessToken}`, 
+        accept: 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -54,12 +53,12 @@ const fetchTasks = async (accessToken: string, refreshToken: string) => {
       const newAccessToken = await refreshAccessToken(refreshToken);
       if (newAccessToken) {
         accessToken = newAccessToken;
-        return fetchTasks(accessToken, refreshToken); 
+        return fetchTasks(accessToken, refreshToken);
       }
     }
 
     const tasks = await response.json();
-  
+
     return tasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -68,14 +67,14 @@ const fetchTasks = async (accessToken: string, refreshToken: string) => {
 };
 
 const TaskHistoryScreen = () => {
-  const [tasks, setTasks] = useState<Task[]>([]); 
+  const [tasks, setTasks] = useState<Task[]>([]);
   const router = useRouter();
-  
+
   useEffect(() => {
     const loadTasks = async () => {
       const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
       const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-      
+
       if (accessToken && refreshToken) {
         const fetchedTasks = await fetchTasks(accessToken, refreshToken);
         setTasks(fetchedTasks);
@@ -87,7 +86,6 @@ const TaskHistoryScreen = () => {
     loadTasks();
   }, []);
 
-
   const handleReviewPress = () => {
     router.push('/review/reviews');
   };
@@ -96,33 +94,29 @@ const TaskHistoryScreen = () => {
     router.push('/review/pending');
   };
 
-
   return (
     <SafeAreaView className="flex-1 bg-background">
-    <View className="flex-row items-center px-4 py-4 border-b border-border" style={{ backgroundColor: '#F97316' }}>
-
-      <TouchableOpacity onPress={() => router.back()} className="mr-4">
-        <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
-      </TouchableOpacity>
-      <Text className="text-xl flex-1 font-bold text-center text-white">
-        Task History
-      </Text>
-      <TouchableOpacity onPress={handleReviewPress} className="ml-4">
-        <MaterialCommunityIcons name="menu" size={24} color="#fff" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handlePendingPress} className="ml-4">
-      <Text className="text-xl flex-1 font-bold text-center text-white">
-        Pending Review
-      </Text>
-      </TouchableOpacity>
-    </View>
-
+      <View
+        className="flex-row items-center px-4 py-4 border-b border-border"
+        style={{ backgroundColor: '#F97316' }}
+      >
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text className="text-xl flex-1 font-bold text-center text-white">Task History</Text>
+        <TouchableOpacity onPress={handleReviewPress} className="ml-4">
+          <MaterialCommunityIcons name="menu" size={24} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePendingPress} className="ml-4">
+          <Text className="text-xl flex-1 font-bold text-center text-white">Pending Review</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView className="p-4">
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <TouchableOpacity
-            key={task.id}  
-            onPress={() => router.push(`/tasks/${task.id}`)}  
+            key={task.id}
+            onPress={() => router.push(`/tasks/${task.id}`)}
             className="p-4 mb-4 border border-border rounded-lg bg-card flex-row items-center"
           >
             <MaterialCommunityIcons
@@ -130,8 +124,8 @@ const TaskHistoryScreen = () => {
                 task.task_type === 'TEXT'
                   ? 'file-document'
                   : task.task_type === 'IMAGE'
-                  ? 'file-image'
-                  : 'file-video'
+                    ? 'file-image'
+                    : 'file-video'
               }
               size={24}
               color="#F97316"
