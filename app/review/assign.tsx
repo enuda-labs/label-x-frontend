@@ -77,7 +77,7 @@ const AssignedTasksScreen = () => {
   }, []);
 
   const handleSubmitForReview = (taskId: string) => {
-    router.push(`/review/justify?taskId=${taskId}`);
+    router.push(`/review/submit?taskId=${taskId}`);
   };
 
   const handleBackNavigation = () => {
@@ -136,15 +136,15 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
-            {task.processing_status !== 'COMPLETED' && (
-              <TouchableOpacity
-                onPress={() => handleSubmitForReview(task.id)}
-                style={{ backgroundColor: '#F97316' }}
-                className="mt-2 self-start px-3 py-2 rounded"
-              >
-                <Text className="text-white font-medium">Review</Text>
-              </TouchableOpacity>
-            )}
+            {task.processing_status === 'ASSIGNED_REVIEWER' && (
+  <TouchableOpacity
+    onPress={() => handleSubmitForReview(task.id)}
+    style={{ backgroundColor: '#F97316' }}
+    className="mt-2 self-start px-3 py-2 rounded"
+  >
+    <Text className="text-white font-medium">Review</Text>
+  </TouchableOpacity>
+)}
           </View>
         ))}
       </ScrollView>
