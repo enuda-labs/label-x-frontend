@@ -95,7 +95,7 @@ const AssignedTasksScreen = () => {
       </SafeAreaView>
     );
   }
- 
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 py-4 border-b border-border">

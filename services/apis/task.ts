@@ -36,6 +36,6 @@ export const fetchTasks = async () => {
 };
 
 export const submitReview = async (payload: any) => {
-  const response = await axiosClient.get<Task[]>('/tasks/submit-review', payload);
+  const response = await axiosClient.post<Task[]>('/tasks/submit-review', payload);
   return response.data;
 };
