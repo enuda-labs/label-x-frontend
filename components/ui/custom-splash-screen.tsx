@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { cn } from '@/lib/cn';
+//import { cn } from '@/lib/cn';
 //import * as SplashScreen from 'expo-splash-screen';
 
 const CustomSplashScreen = () => {
