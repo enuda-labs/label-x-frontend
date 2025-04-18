@@ -13,7 +13,7 @@ type Task = {
   task_id: number;
   serial_no: string;
   task_type: 'TEXT' | 'IMAGE' | 'VIDEO';
-  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  processing_status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
   human_reviewed: boolean;
   submitted_by: string;
   assigned_to: string | null;
@@ -73,8 +73,9 @@ export default function TaskDetailScreen() {
           }
         };
 
-        socket.onerror = () => {
+        socket.onerror = err => {
           setError('WebSocket connection error.');
+          console.log(err);
         };
 
         socket.onclose = e => {
@@ -83,7 +84,7 @@ export default function TaskDetailScreen() {
       }
     };
 
-    initializeWebSocket();
+    // initializeWebSocket();
 
     return () => {
       if (socket) {
@@ -96,7 +97,7 @@ export default function TaskDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 justify-center items-center p-4">
-          <ActivityIndicator size="large" color="#00ff00" />
+          <ActivityIndicator size="large" color="#F97316" />
         </View>
       </SafeAreaView>
     );
@@ -150,7 +151,7 @@ export default function TaskDetailScreen() {
 
   const StatusIcon = () => {
     if (!task) return null;
-    switch (task.status) {
+    switch (task.processing_status) {
       case 'PENDING':
         return <MaterialCommunityIcons name="clock" size={24} color="#eab308" />;
       case 'PROCESSING':
@@ -203,7 +204,7 @@ export default function TaskDetailScreen() {
                 <View className="flex-row items-center mt-1">
                   <StatusIcon />
                   <Text className={cn('ml-1 text-white font-medium px-2 py-1 rounded-md')}>
-                    {capitalize(task.status)}
+                    {capitalize(task.processing_status)}
                   </Text>
                 </View>
               </View>
@@ -243,7 +244,7 @@ export default function TaskDetailScreen() {
         <View className="bg-card rounded-lg border border-border p-5">
           <Text className="text-lg font-semibold text-foreground mb-4">Results</Text>
 
-          {task.status === 'COMPLETED' ? (
+          {task.processing_status === 'COMPLETED' ? (
             <View className="p-4 bg-muted rounded-md">
               <Text className="text-foreground">
                 {task.task_type === 'TEXT' && 'Processed text analysis results...'}
@@ -254,9 +255,9 @@ export default function TaskDetailScreen() {
           ) : (
             <View className="flex items-center justify-center py-8">
               <Text className="text-muted-foreground">
-                {task.status === 'PENDING' && 'Task is pending processing...'}
-                {task.status === 'PROCESSING' && 'Task is currently being processed...'}
-                {task.status === 'FAILED' && 'Task processing failed. Please try again.'}
+                {task.processing_status === 'PENDING' && 'Task is pending processing...'}
+                {task.processing_status === 'PROCESSING' && 'Task is currently being processed...'}
+                {task.processing_status === 'FAILED' && 'Task processing failed. Please try again.'}
               </Text>
             </View>
           )}
