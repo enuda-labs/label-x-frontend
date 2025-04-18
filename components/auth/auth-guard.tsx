@@ -75,7 +75,6 @@ export const AuthGate = ({ children }: Props) => {
     return (
       <>
         <CustomSplashScreen />
-        <ActivityIndicator size="large" color="#F97316" />
       </>
     );
   }

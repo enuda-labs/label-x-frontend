@@ -19,6 +19,10 @@ type Task = {
   assigned_to: string | null;
   created_at: string;
   updated_at: string;
+  ai_output: {
+    classification: string;
+    confidence: string;
+  };
 };
 
 export default function TaskDetailScreen() {
@@ -246,11 +250,18 @@ export default function TaskDetailScreen() {
 
           {task.processing_status === 'COMPLETED' ? (
             <View className="p-4 bg-muted rounded-md">
-              <Text className="text-foreground">
-                {task.task_type === 'TEXT' && 'Processed text analysis results...'}
-                {task.task_type === 'IMAGE' && 'Processed image analysis results...'}
-                {task.task_type === 'VIDEO' && 'Processed video analysis results...'}
-              </Text>
+              {task.task_type === 'TEXT' && (
+                <View className="text-foreground flex-col gap-y-3">
+                  <Text className="text-foreground font-semibold text-[1rem]">
+                    Classification: {task?.ai_output?.classification}
+                  </Text>
+                  <Text className="text-foreground font-semibold text-[1rem]">
+                    Confidence: {task?.ai_output?.confidence}
+                  </Text>
+                </View>
+              )}
+              {task.task_type === 'IMAGE' && 'Processed image analysis results...'}
+              {task.task_type === 'VIDEO' && 'Processed video analysis results...'}
             </View>
           ) : (
             <View className="flex items-center justify-center py-8">

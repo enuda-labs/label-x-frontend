@@ -55,7 +55,7 @@ const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
     final_label: task.final_label ?? 'None',
     priority: task.priority,
     processing_status: task.processing_status,
-    assigned_to: task.assigned_to,
+    assigned_to: task.assigned_to.toString(),
     created_at: task.created_at,
   }));
 };
@@ -95,7 +95,7 @@ const AssignedTasksScreen = () => {
       </SafeAreaView>
     );
   }
-
+  //console.log(tasks)
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 py-4 border-b border-border">
@@ -112,7 +112,7 @@ const AssignedTasksScreen = () => {
           <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
             <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
             <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
-            <Text className="mb-1 text-foreground">Text: {task.text}</Text>
+            <Text className="mb-1 text-foreground">Text: {task?.text}</Text>
             <Text className="mb-1 text-foreground">
               AI Classification: {task.ai_classification}
             </Text>
@@ -136,13 +136,15 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
-            <TouchableOpacity
-              onPress={() => handleSubmitForReview(task.id)}
-              style={{ backgroundColor: '#F97316' }}
-              className="mt-2 self-start px-3 py-2 rounded"
-            >
-              <Text className="text-white font-medium">Review</Text>
-            </TouchableOpacity>
+            {task.processing_status !== 'COMPLETED' && (
+              <TouchableOpacity
+                onPress={() => handleSubmitForReview(task.id)}
+                style={{ backgroundColor: '#F97316' }}
+                className="mt-2 self-start px-3 py-2 rounded"
+              >
+                <Text className="text-white font-medium">Review</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>

@@ -12,4 +12,5 @@ export type Task = {
   serial_no: string;
   submitted_by: string;
   task_id: number;
+  data?: string;
 };

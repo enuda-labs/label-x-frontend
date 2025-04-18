@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import { Text, View, TouchableOpacity, ScrollView } from 'react-native'
-import { Ionicons, Feather } from '@expo/vector-icons'
-import PageContainer from '@/components/ui/page-container'
-import { useRouter } from 'expo-router'
-import { useGlobalStore } from '@/context/store'
+import React, { useState, useEffect } from 'react';
+import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import PageContainer from '@/components/ui/page-container';
+import { useRouter } from 'expo-router';
+import { useGlobalStore } from '@/context/store';
 import {
   fetchAssignedTasks,
   fetchReviewTasks,
   fetchPendingReviews,
   fetchTasks,
-} from '@/services/apis/task'
-import { Task } from '@/components/types/task'
-import { RawTask } from '@/components/types/raw-task'
-import { ReviewTask } from '@/components/types/review-task'
+} from '@/services/apis/task';
+import { Task } from '@/components/types/task';
+import { RawTask } from '@/components/types/raw-task';
+import { ReviewTask } from '@/components/types/review-task';
 
 // Map a RawTask (from assigned tasks API) into a ReviewTask
 const mapRawToReview = (raw: RawTask): ReviewTask => ({
   id: raw.id.toString(),
   serial_no: raw.serial_no.toString(),
-  data: raw.data,
+  data: raw.data ?? '',
   ai_classification: raw.ai_output?.classification ?? '',
   confidence: raw.ai_output?.confidence ?? 0,
   human_reviewed: raw.human_review?.correction ?? '',
@@ -27,14 +27,16 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
   created_at: raw.created_at,
   processing_status: raw.processing_status,
   assigned_to: raw.assigned_to?.toString() ?? null,
-  ai_output: raw.ai_output ?? null,
-  human_review: raw.human_review
+  ai_output: raw.ai_output
+    ? { classification: raw.ai_output.classification, confidence: raw.ai_output.confidence }
+    : undefined,
+  human_review: raw?.human_review
     ? {
-        correction: raw.human_review.correction ?? null,
-        justification: raw.human_review.justification ?? null,
+        correction: raw?.human_review?.correction ?? null,
+        justification: raw?.human_review?.justification ?? null,
       }
     : undefined,
-})
+});
 
 // Map a basic Task (from my-tasks API) into a ReviewTask shape
 const mapTaskToReview = (task: Task): ReviewTask => ({
@@ -43,79 +45,76 @@ const mapTaskToReview = (task: Task): ReviewTask => ({
   data: '',
   ai_classification: '',
   confidence: 0,
-  human_reviewed: task.human_reviewed ? 'Yes' : '',
+  human_reviewed: task?.human_reviewed ? 'Yes' : '',
   final_label: '',
   priority: 'low',
   created_at: task.created_at,
   processing_status: task.status,
-  assigned_to: task.assigned_to,
-})
+  assigned_to: task?.assigned_to ?? '',
+});
 
 export default function ReviewerDashboard() {
-  const router = useRouter()
-  const { user } = useGlobalStore()
+  const router = useRouter();
+  const { user } = useGlobalStore();
 
-  const [stats, setStats] = useState({ available: 0, pending: 0, completed: 0, urgentTasks: 0 })
-  const [newTasks, setNewTasks] = useState<ReviewTask[]>([])
-  const [recentReviews, setRecentReviews] = useState<ReviewTask[]>([])
+  const [stats, setStats] = useState({ available: 0, pending: 0, completed: 0, urgentTasks: 0 });
+  const [newTasks, setNewTasks] = useState<ReviewTask[]>([]);
+  const [recentReviews, setRecentReviews] = useState<ReviewTask[]>([]);
 
   useEffect(() => {
     async function loadData() {
       // Fetch data from APIs
-      const assignedRaw = await fetchAssignedTasks()       // RawTask[]
-      const reviewRaw = await fetchReviewTasks()           // RawTask[]
-      const pendingRaw = await fetchPendingReviews()       // RawTask[]
-      const myTasksRaw = await fetchTasks()                // Task[]
+      const assignedRaw = await fetchAssignedTasks(); // RawTask[]
+      const reviewRaw = await fetchReviewTasks(); // RawTask[]
+      const pendingRaw = await fetchPendingReviews(); // RawTask[]
+      const myTasksRaw = await fetchTasks(); // Task[]
 
       // Map all RawTask arrays into ReviewTask
-      const assigned = assignedRaw.map(mapRawToReview)
-      const reviewNeeded = reviewRaw.map(mapRawToReview)
-      const pending = pendingRaw.map(mapRawToReview)
-      const myTasks = myTasksRaw.map(mapTaskToReview)
+      const assigned = assignedRaw.map(mapRawToReview);
+      const reviewNeeded = reviewRaw.map(mapRawToReview);
+      const pending = pendingRaw.map(mapRawToReview);
+      const myTasks = myTasksRaw.map(mapTaskToReview);
 
       // Compute stats based on assigned tasks
-      const pendingCount = assigned.filter(t => t.processing_status === 'ASSIGNED_REVIEWER').length
-      const completedCount = assigned.length - pendingCount
-      const urgentCount = assigned.filter(t => t.priority === 'urgent').length
+      const pendingCount = assigned.filter(t => t.processing_status === 'ASSIGNED_REVIEWER').length;
+      const completedCount = assigned.length - pendingCount;
+      const urgentCount = assigned.filter(t => t.priority === 'urgent').length;
 
       setStats({
         available: assigned.length,
         pending: pendingCount,
         completed: completedCount,
         urgentTasks: urgentCount,
-      })
+      });
 
       // Now set tasks with proper mapped fields
-      setNewTasks(reviewNeeded)
-      setRecentReviews(pending)
+      setNewTasks(reviewNeeded);
+      setRecentReviews(pending);
     }
 
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
-  const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A')
-
+  const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
 
   const getClassificationColor = (classification: string) => {
     switch (classification.toLowerCase()) {
       case 'safe':
-        return 'text-green-400'
+        return 'text-green-400';
       case 'mildly offensive':
-        return 'text-yellow-400'
+        return 'text-yellow-400';
       case 'unsafe':
-        return 'text-orange-400'
+        return 'text-orange-400';
       case 'highly offensive':
-        return 'text-red-400'
+        return 'text-red-400';
       default:
-        return 'text-gray-400'
+        return 'text-gray-400';
     }
-  }
-
-
+  };
 
   const renderTaskCard = (task: ReviewTask) => {
-    const labelText = capitalize(task.final_label)
-    const classificationColor = getClassificationColor(task.ai_classification)
+    const labelText = capitalize(task.final_label);
+    const classificationColor = getClassificationColor(task.ai_classification);
     return (
       <View key={task.id} className="bg-card border border-card/10 p-4 rounded-lg mb-3">
         <View className="flex-row justify-between items-center mb-2">
@@ -126,17 +125,23 @@ export default function ReviewerDashboard() {
           <View className="flex-row items-center">
             {task.processing_status === 'ASSIGNED_REVIEWER' ? (
               <>
-                <Ionicons name="time-outline" size={16} color="#60A5FA" />
+                <Ionicons name="time-outline" size={16} color="#F97316" />
                 <Text className="text-primary text-xs ml-1">Pending</Text>
               </>
             ) : (
-             <>
+              <>
                 <Ionicons
-                  name={task.final_label === 'safe' ? 'checkmark-circle-outline' : 'close-circle-outline'}
+                  name={
+                    task.final_label === 'safe'
+                      ? 'checkmark-circle-outline'
+                      : 'close-circle-outline'
+                  }
                   size={16}
                   color={task.final_label === 'safe' ? '#34D399' : '#F87171'}
                 />
-                <Text className={`text-xs ml-1 ${task.final_label === 'safe' ? 'text-green-400' : 'text-red-400'}`}>
+                <Text
+                  className={`text-xs ml-1 ${task?.final_label === 'safe' ? 'text-green-400' : 'text-red-400'}`}
+                >
                   {labelText}
                 </Text>
               </>
@@ -144,15 +149,21 @@ export default function ReviewerDashboard() {
           </View>
         </View>
         <View className="flex-row flex-wrap">
-        <Text className={`text-xs mr-4 ${classificationColor}`}>AI: {task.ai_classification}</Text>
-          <Text className="text-gray-400 text-xs mr-4">Confidence: {(task.confidence * 100).toFixed(1)}%</Text>
+          <Text className={`text-xs mr-4 ${classificationColor}`}>
+            AI: {task.ai_classification}
+          </Text>
+          <Text className="text-gray-400 text-xs mr-4">
+            Confidence: {(task.confidence * 100).toFixed(1)}%
+          </Text>
           <Text className="text-gray-400 text-xs mr-4">Priority: {capitalize(task.priority)}</Text>
-          <Text className="text-gray-400 text-xs mr-4">Created: {new Date(task.created_at).toLocaleDateString()}</Text>
-          <Text className="text-gray-400 text-xs">Assigned To: {task.assigned_to || 'N/A'}</Text>
+          <Text className="text-gray-400 text-xs mr-4">
+            Created: {new Date(task.created_at).toLocaleDateString()}
+          </Text>
+          {/* <Text className="text-gray-400 text-xs">Assigned To: {task.assigned_to || 'N/A'}</Text> */}
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   return (
     <PageContainer>
@@ -235,10 +246,12 @@ export default function ReviewerDashboard() {
           </View>
           <View className="flex-row justify-between">
             <Text className="text-gray-400">Weekly Completion</Text>
-            <Text className="text-white font-bold">{stats.completed}/{stats.available}</Text>
+            <Text className="text-white font-bold">
+              {stats.completed}/{stats.available}
+            </Text>
           </View>
         </View>
       </View>
     </PageContainer>
-  )
+  );
 }
