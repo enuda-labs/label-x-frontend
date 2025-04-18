@@ -6,6 +6,7 @@ import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
 import { useGlobalStore } from '@/context/store';
 import { AxiosClient } from '@/utils/axios';
 import { isAxiosError } from 'axios';
+import CustomSplashScreen from '../ui/custom-splash-screen';
 
 type Props = {
   children: React.ReactNode;
@@ -72,9 +73,9 @@ export const AuthGate = ({ children }: Props) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color="#F97316" />
-      </View>
+      <>
+        <CustomSplashScreen />
+      </>
     );
   }
   return <>{children}</>;

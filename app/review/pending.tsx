@@ -107,7 +107,7 @@ const PendingReviewsTasksScreen = () => {
               <Text className="text-sm mb-1 text-white font-medium">
                 Serial No: {task.serial_no}
               </Text>
-              <Text className="text-sm mb-1 text-white">Text: {task.text}</Text>
+              <Text className="text-sm mb-1 text-white">Text: {task?.text}</Text>
               <Text className="text-sm mb-1 text-white">
                 AI Classification: {task.ai_classification}
               </Text>

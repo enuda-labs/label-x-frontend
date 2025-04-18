@@ -55,7 +55,7 @@ const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
     final_label: task.final_label ?? 'None',
     priority: task.priority,
     processing_status: task.processing_status,
-    assigned_to: task.assigned_to,
+    assigned_to: task.assigned_to.toString(),
     created_at: task.created_at,
   }));
 };
@@ -112,7 +112,7 @@ const AssignedTasksScreen = () => {
           <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
             <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
             <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
-            <Text className="mb-1 text-foreground">Text: {task.text}</Text>
+            <Text className="mb-1 text-foreground">Text: {task?.text}</Text>
             <Text className="mb-1 text-foreground">
               AI Classification: {task.ai_classification}
             </Text>
@@ -120,7 +120,7 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
             <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
             <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
-            <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text>
+            {/* <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text> */}
             <Text
               className={`mb-1 font-medium ${
                 task.processing_status === 'COMPLETED'
@@ -137,14 +137,14 @@ const AssignedTasksScreen = () => {
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
             {task.processing_status === 'ASSIGNED_REVIEWER' && (
-  <TouchableOpacity
-    onPress={() => handleSubmitForReview(task.id)}
-    style={{ backgroundColor: '#F97316' }}
-    className="mt-2 self-start px-3 py-2 rounded"
-  >
-    <Text className="text-white font-medium">Review</Text>
-  </TouchableOpacity>
-)}
+              <TouchableOpacity
+                onPress={() => handleSubmitForReview(task.id)}
+                style={{ backgroundColor: '#F97316' }}
+                className="mt-2 self-start px-3 py-2 rounded"
+              >
+                <Text className="text-white font-medium">Review</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>

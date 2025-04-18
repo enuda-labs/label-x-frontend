@@ -1,4 +1,4 @@
-import { Task } from '@/components/types/task'
+import { Task } from '@/components/types/task';
 import { RawTask } from '@/app/review/assign';
 import { ReviewTask } from '@/components/types/review-task';
 import { AxiosClient } from '@/utils/axios';
@@ -6,12 +6,12 @@ import { AxiosClient } from '@/utils/axios';
 const axiosClient = new AxiosClient();
 
 export const fetchAssignedTasks = async () => {
-  const response = await axiosClient.get<RawTask[]>('tasks/assigned-task');
+  const response = await axiosClient.get<RawTask[]>('/tasks/assigned-task');
   return response.data;
 };
 
 export const fetchReviewTasks = async () => {
-  const response = await axiosClient.get<ReviewTask[]>('tasks/review-needed/');
+  const response = await axiosClient.get<ReviewTask[]>('/tasks/review-needed/');
   return response.data;
 };
 
@@ -26,16 +26,16 @@ export const assignTask = async (taskId: string) => {
 };
 
 export const fetchPendingReviews = async () => {
-  const response = await axiosClient.get<ReviewTask[]>('tasks/my-pending-reviews/');
+  const response = await axiosClient.get<ReviewTask[]>('/tasks/my-pending-reviews/');
   return response.data;
 };
 
 export const fetchTasks = async () => {
-  const response = await axiosClient.get<Task[]>('tasks/my-tasks/');
+  const response = await axiosClient.get<Task[]>('/tasks/my-tasks/');
   return response.data;
 };
 
 export const submitReview = async (payload: any) => {
-  const response = await axiosClient.get<Task[]>('tasks/submit-review/', payload);
+  const response = await axiosClient.post<Task[]>('/tasks/submit-review', payload);
   return response.data;
 };

@@ -72,7 +72,7 @@ const PendingReviewsTasksScreen = () => {
           <Pressable onPress={handleBackNavigation}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
           </Pressable>
-          <Text className=" flex-1 text-center text-xl text-white font-semibold">
+          <Text className=" flex-1 text-center text-xl text-white font-semibold mb-3">
             📋 My Pending Reviews
           </Text>
         </View>
@@ -93,11 +93,11 @@ const PendingReviewsTasksScreen = () => {
           No pending reviews available.
         </Text>
       ) : (
-        <ScrollView className="space-y-4">
+        <ScrollView className="flex-col gap-4">
           {tasks.map(task => (
             <View
               key={task.id}
-              className="bg-background p-4 rounded-xl shadow-sm border border-gray-200"
+              className=" p-4 rounded-xl shadow-sm bg-card border border-gray-800 mb-4"
             >
               <Text className="text-sm mb-1 text-white font-medium">
                 Serial No: {task.serial_no}

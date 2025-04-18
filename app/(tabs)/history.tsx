@@ -5,13 +5,8 @@ import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { fetchTasks } from '@/services/apis/task';
 
-// Define the Task interface
-export interface Task {
-  id: string;
-  data: string;
-  serial_no: string;
-  task_type: string;
-}
+// Import the Task interface from the shared types file
+import { Task } from '@/components/types/task';
 
 const fetchMyTasks = async () => {
   try {
