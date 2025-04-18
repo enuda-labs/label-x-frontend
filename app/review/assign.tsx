@@ -136,13 +136,15 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
-            <TouchableOpacity
-              onPress={() => handleSubmitForReview(task.id)}
-              style={{ backgroundColor: '#F97316' }}
-              className="mt-2 self-start px-3 py-2 rounded"
-            >
-              <Text className="text-white font-medium">Review</Text>
-            </TouchableOpacity>
+            {task.processing_status === 'ASSIGNED_REVIEWER' && (
+  <TouchableOpacity
+    onPress={() => handleSubmitForReview(task.id)}
+    style={{ backgroundColor: '#F97316' }}
+    className="mt-2 self-start px-3 py-2 rounded"
+  >
+    <Text className="text-white font-medium">Review</Text>
+  </TouchableOpacity>
+)}
           </View>
         ))}
       </ScrollView>

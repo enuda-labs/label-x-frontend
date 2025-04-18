@@ -40,9 +40,9 @@ const TabBar = ({ isAdmin = false }: TabBarRole) => {
     }
 
     baseTabs.push({
-      name: 'History',
+      name: 'Account',
       icon: 'user',
-      path: '/(tabs)/history',
+      path: '/(tabs)/account',
     });
 
     return baseTabs;
