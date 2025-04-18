@@ -77,7 +77,7 @@ const AssignedTasksScreen = () => {
   }, []);
 
   const handleSubmitForReview = (taskId: string) => {
-    router.push(`/review/submit?taskId=${taskId}`);
+    router.push(`/review/justify?taskId=${taskId}`);
   };
 
   const handleBackNavigation = () => {

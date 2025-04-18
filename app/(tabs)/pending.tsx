@@ -93,11 +93,11 @@ const PendingReviewsTasksScreen = () => {
           No pending reviews available.
         </Text>
       ) : (
-        <ScrollView className="space-y-4">
+        <ScrollView className="flex-col gap-4">
           {tasks.map(task => (
             <View
               key={task.id}
-              className="bg-background p-4 rounded-xl shadow-sm border border-gray-200"
+              className="bg-background p-4 rounded-xl shadow-sm border border-gray-200 mb-2"
             >
               <Text className="text-sm mb-1 text-white font-medium">
                 Serial No: {task.serial_no}

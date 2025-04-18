@@ -104,7 +104,7 @@ const SubmitReviewScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-background" style={{ flex: 1, padding: 16 }}>
+    <SafeAreaView className="bg-background px-5" style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, color: '#FFF', fontWeight: 'bold', textAlign: 'center' }}>
         Submit Review
       </Text>
