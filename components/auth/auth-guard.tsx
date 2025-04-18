@@ -42,7 +42,6 @@ export const AuthGate = ({ children }: Props) => {
 
             const role = await storage.getItem(ROLE);
             const user = await storage.getItem('user');
-            console.log(user);
             setRole(role);
             if (user) {
               setUser(JSON.parse(user).username);
@@ -70,7 +69,7 @@ export const AuthGate = ({ children }: Props) => {
 
     checkAuth();
   }, []);
-  
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-background">

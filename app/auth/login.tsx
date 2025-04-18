@@ -12,7 +12,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
-import { AxiosClient } from '@/utils/axios';
 import { isAxiosError } from 'axios';
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
@@ -54,7 +53,6 @@ export default function LoginScreen() {
       }
       setIsLoading(true);
       setErrorMessage('');
-      const axiosClient = new AxiosClient();
       const storage = new MemoryStorage();
       storage.removeItem(ACCESS_TOKEN_KEY);
       storage.removeItem(REFRESH_TOKEN_KEY);
