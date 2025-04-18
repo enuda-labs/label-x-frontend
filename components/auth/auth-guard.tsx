@@ -44,7 +44,9 @@ export const AuthGate = ({ children }: Props) => {
             const role = await storage.getItem(ROLE);
             const user = await storage.getItem('user');
             setRole(role);
-            setUser(user);
+            if (user) {
+              setUser(JSON.parse(user).username);
+            }
 
             if (role === 'admin') {
               return router.replace('/admin');
@@ -68,6 +70,7 @@ export const AuthGate = ({ children }: Props) => {
 
     checkAuth();
   }, []);
+
   if (loading) {
     return (
       <>

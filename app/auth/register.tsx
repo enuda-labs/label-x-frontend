@@ -12,22 +12,22 @@ import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
-import { AxiosClient } from '@/utils/axios';
 import { isAxiosError } from 'axios';
+import { register } from '@/services/apis/auth';
 
-interface RegisterBody {
+export interface RegisterBody {
   username: string;
   email: string;
   password: string;
 }
 
-interface UserData {
+export interface UserData {
   id: number;
   username: string;
   email: string;
 }
 
-interface RegisterResponse {
+export interface RegisterResponse {
   status: 'success' | 'error';
   user_data: UserData;
 }
@@ -47,19 +47,12 @@ export default function RegisterScreen() {
       }
       setIsLoading(true);
       setErrorMessage('');
-      const axiosClient = new AxiosClient();
-
-      const response = await axiosClient.post<RegisterBody, RegisterResponse>(
-        '/account/register/',
-        {
-          username: name,
-          email,
-          password,
-        }
-      );
-      if (response.status === 201) {
-        router.replace(`/auth/login?username=${name}`);
-      }
+      await register({
+        username: name,
+        email,
+        password,
+      });
+      router.replace(`/auth/login?username=${name}`);
     } catch (error: any) {
       console.log(error.response?.data);
       if (isAxiosError(error)) {

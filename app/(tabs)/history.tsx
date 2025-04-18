@@ -3,62 +3,19 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
-import { BASE_API_URL } from '../../constants/env-vars';
+import { fetchTasks } from '@/services/apis/task';
 
 // Define the Task interface
-interface Task {
+export interface Task {
   id: string;
+  data: string;
   serial_no: string;
   task_type: string;
 }
 
-const storage = new MemoryStorage();
-
-const refreshAccessToken = async (refreshToken: string) => {
-  const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
-  const refreshResponse = await fetch(refreshUrl, {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ refresh: refreshToken }),
-  });
-
-  if (!refreshResponse.ok) {
-    const refreshError = await refreshResponse.json();
-    console.error('Error refreshing token:', refreshError);
-    redirectToLogin();
-    return null;
-  }
-
-  const refreshedTokens = await refreshResponse.json();
-  return refreshedTokens.access;
-};
-
-const fetchTasks = async (accessToken: string, refreshToken: string) => {
+const fetchMyTasks = async () => {
   try {
-    const tasksUrl = `${BASE_API_URL}/tasks/my-tasks/`;
-    let response = await fetch(tasksUrl, {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (response.status === 401) {
-      const newAccessToken = await refreshAccessToken(refreshToken);
-      if (newAccessToken) {
-        accessToken = newAccessToken;
-        return fetchTasks(accessToken, refreshToken);
-      }
-    }
-
-    const tasks = await response.json();
-
+    const tasks = await fetchTasks();
     return tasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -72,17 +29,9 @@ const TaskHistoryScreen = () => {
 
   useEffect(() => {
     const loadTasks = async () => {
-      const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
-      const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-
-      if (accessToken && refreshToken) {
-        const fetchedTasks = await fetchTasks(accessToken, refreshToken);
-        setTasks(fetchedTasks);
-      } else {
-        redirectToLogin();
-      }
+      const fetchedTasks = await fetchMyTasks();
+      setTasks(fetchedTasks);
     };
-
     loadTasks();
   }, []);
 
@@ -122,16 +71,12 @@ const TaskHistoryScreen = () => {
               size={24}
               color="#F97316"
             />
-            <Text className="ml-3 text-lg font-medium text-foreground">{task.serial_no}</Text>
+            <Text className="ml-3 text-lg font-medium text-foreground">{task.data}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-const redirectToLogin = () => {
-  Alert.alert('Session Expired', 'Please log in again.');
 };
 
 export default TaskHistoryScreen;
