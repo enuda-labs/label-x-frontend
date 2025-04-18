@@ -1,4 +1,4 @@
-import { Task } from '@/app/(tabs)/history';
+import { Task } from '@/components/types/task'
 import { RawTask } from '@/app/review/assign';
 import { ReviewTask } from '@/components/types/review-task';
 import { AxiosClient } from '@/utils/axios';
