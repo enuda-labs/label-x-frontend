@@ -52,7 +52,7 @@ const TabBar = ({ isAdmin = false }: TabBarRole) => {
 
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true;
-    if (path !== '/' && pathname.startsWith(path)) return true;
+    if (path !== '/' && path.endsWith(pathname)) return true;
     return false;
   };
 

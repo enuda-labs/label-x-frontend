@@ -10,11 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
-import { BASE_API_URL } from '@/constants/env-vars';
-
-const storage = new MemoryStorage();
+import { submitReview } from '@/services/apis/task';
 
 const SubmitReviewScreen = () => {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
@@ -28,7 +24,7 @@ const SubmitReviewScreen = () => {
 
   const router = useRouter();
 
-  const submitReview = async () => {
+  const handleSubmitReview = async () => {
     setError('');
 
     if (!taskId) {
@@ -39,21 +35,6 @@ const SubmitReviewScreen = () => {
         window.alert(errorMessage);
       } else {
         Alert.alert('Error', errorMessage);
-      }
-      return;
-    }
-
-    const accessToken = await storage.getItem(ACCESS_TOKEN_KEY);
-    const refreshToken = await storage.getItem(REFRESH_TOKEN_KEY);
-
-    if (!accessToken || !refreshToken) {
-      console.log('No access token or refresh token found.');
-      const errorMessage = 'Session Expired. Please log in again.';
-      setError(errorMessage);
-      if (typeof window !== 'undefined') {
-        window.alert(errorMessage);
-      } else {
-        Alert.alert('Session Expired', errorMessage);
       }
       return;
     }
@@ -80,48 +61,35 @@ const SubmitReviewScreen = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${BASE_API_URL}/tasks/submit-review`, {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      await submitReview(data);
 
-      const result = await response.json();
-
-      if (response.ok) {
-        if (typeof window !== 'undefined') {
-          window.alert('Review submitted successfully');
-        } else {
-          Alert.alert('Success', 'Review submitted successfully');
-        }
-
-        router.push('/review/completed');
+      if (typeof window !== 'undefined') {
+        window.alert('Review submitted successfully');
       } else {
-        if (result.errors) {
-          console.error('Errors:', result.errors);
-          const errorMessages = Object.values(result.errors).join('\n');
-          setError(errorMessages);
-          if (typeof window !== 'undefined') {
-            window.alert(errorMessages);
-          } else {
-            Alert.alert('Error', errorMessages);
-          }
+        Alert.alert('Success', 'Review submitted successfully');
+      }
+
+      router.push('/review/completed');
+    } catch (error: any) {
+      if (error.errors) {
+        console.error('Errors:', error.errors);
+        const errorMessages = Object.values(error.errors).join('\n');
+        setError(errorMessages);
+        if (typeof window !== 'undefined') {
+          window.alert(errorMessages);
         } else {
-          console.error('Error response:', result);
-          const errorMessage = result.message || 'Failed to submit review';
-          setError(errorMessage);
-          if (typeof window !== 'undefined') {
-            window.alert(errorMessage);
-          } else {
-            Alert.alert('Error', errorMessage);
-          }
+          Alert.alert('Error', errorMessages);
+        }
+      } else {
+        console.error('Error response:', error);
+        const errorMessage = error.message || 'Failed to submit review';
+        setError(errorMessage);
+        if (typeof window !== 'undefined') {
+          window.alert(errorMessage);
+        } else {
+          Alert.alert('Error', errorMessage);
         }
       }
-    } catch (error) {
       console.error('Error submitting review:', error);
       const errorMessage = 'There was an error submitting the review';
       setError(errorMessage);
@@ -197,7 +165,7 @@ const SubmitReviewScreen = () => {
           borderRadius: 8,
           alignItems: 'center',
         }}
-        onPress={submitReview}
+        onPress={handleSubmitReview}
         disabled={loading}
       >
         {loading ? (

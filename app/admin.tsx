@@ -44,7 +44,7 @@ const Admin = () => {
     return (
       <SafeAreaView className="flex-1 bg-background p-4">
         <View className="flex-1 justify-center items-center">
-          <Text>{error}</Text>
+          <Text className="text-white">{error}</Text>
         </View>
       </SafeAreaView>
     );
