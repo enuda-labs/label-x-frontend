@@ -95,7 +95,7 @@ const AssignedTasksScreen = () => {
       </SafeAreaView>
     );
   }
-  //console.log(tasks)
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 py-4 border-b border-border">
@@ -120,7 +120,7 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
             <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
             <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
-            <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text>
+            {/* <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text> */}
             <Text
               className={`mb-1 font-medium ${
                 task.processing_status === 'COMPLETED'
@@ -136,7 +136,7 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>
-            {task.processing_status !== 'COMPLETED' && (
+            {task.processing_status === 'ASSIGNED_REVIEWER' && (
               <TouchableOpacity
                 onPress={() => handleSubmitForReview(task.id)}
                 style={{ backgroundColor: '#F97316' }}

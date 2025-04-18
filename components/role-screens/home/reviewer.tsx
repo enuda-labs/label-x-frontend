@@ -32,8 +32,8 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
     : undefined,
   human_review: raw?.human_review
     ? {
-        correction: raw?.human_review?.correction ?? null,
-        justification: raw?.human_review?.justification ?? null,
+        correction: raw.human_review.correction ?? null,
+        justification: raw.human_review.justification ?? null,
       }
     : undefined,
 });
@@ -96,6 +96,10 @@ export default function ReviewerDashboard() {
   }, []);
 
   const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
+
+  const handleMenuPress = () => {
+    router.push('/tasks/history');
+  };
 
   const getClassificationColor = (classification: string) => {
     switch (classification.toLowerCase()) {
@@ -169,7 +173,7 @@ export default function ReviewerDashboard() {
     <PageContainer>
       <View className="flex-row items-center justify-between">
         <View className="mb-4 flex-row items-center pt-2 pb-3">
-          <TouchableOpacity className="p-2">
+          <TouchableOpacity className="p-2" onPress={handleMenuPress}>
             <Feather name="menu" size={24} color="#fff" />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Welcome, {user || 'Reviewer'}</Text>
