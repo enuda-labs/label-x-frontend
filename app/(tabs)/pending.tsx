@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
-import { fetchPendingReviews } from '@/services/apis/task';
 import { isAxiosError } from 'axios';
+import { fetchPendingReviews } from '@/services/apis/task';
 
 const fetchReviews = async (): Promise<ReviewTask[]> => {
   try {
@@ -79,14 +72,16 @@ const PendingReviewsTasksScreen = () => {
           <Pressable onPress={handleBackNavigation}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FFF" />
           </Pressable>
-          <Text className="ml-3 text-xl text-white font-semibold">📋 My Pending Reviews</Text>
+          <Text className=" flex-1 text-center text-xl text-white font-semibold">
+            📋 My Pending Reviews
+          </Text>
         </View>
-        <View className="flex-row items-center">
+        {/* <View className="flex-row items-center">
           <TouchableOpacity onPress={handleAssignedPress}>
             <MaterialCommunityIcons name="menu" size={24} color="#FFF" />
           </TouchableOpacity>
           <Text className="ml-3 text-xl text-white font-semibold">📋 Assigned To Me</Text>
-        </View>
+        </View> */}
       </View>
 
       {loading ? (
@@ -107,7 +102,7 @@ const PendingReviewsTasksScreen = () => {
               <Text className="text-sm mb-1 text-white font-medium">
                 Serial No: {task.serial_no}
               </Text>
-              <Text className="text-sm mb-1 text-white">Text: {task?.text}</Text>
+              <Text className="text-sm mb-1 text-white">Text: {task.text}</Text>
               <Text className="text-sm mb-1 text-white">
                 AI Classification: {task.ai_classification}
               </Text>

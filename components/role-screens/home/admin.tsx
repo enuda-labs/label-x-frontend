@@ -44,7 +44,7 @@ const Admin = () => {
     return (
       <SafeAreaView className="flex-1 bg-background p-4">
         <View className="flex-1 justify-center items-center">
-          <Text className="text-white">{error}</Text>
+          <Text>{error}</Text>
         </View>
       </SafeAreaView>
     );
@@ -53,12 +53,12 @@ const Admin = () => {
   return (
     <SafeAreaView className="flex-1 bg-background p-4">
       <View className="flex-row justify-between items-center mb-10">
-        <Text className="text-white font-semibold text-2xl"> All Projects</Text>
+        <Text className="text-white font-semibold text-2xl">Projects</Text>
         <TouchableOpacity
-          onPress={() => router.push('/auth/login')}
+          onPress={() => router.push('/tasks/new')}
           className="bg-orange-500 p-4 rounded-lg"
         >
-          <Text className="text-white text-center font-semibold">Logout</Text>
+          <Text className="text-white text-center font-semibold">Switch to User</Text>
         </TouchableOpacity>
       </View>
       {loading && (

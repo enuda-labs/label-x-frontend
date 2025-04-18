@@ -12,18 +12,18 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Ionicons } from '@expo/vector-icons';
-import { AxiosClient } from '@/utils/axios';
 import { isAxiosError } from 'axios';
 import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
 import { useGlobalStore } from '@/context/store';
+import { login } from '@/services/apis/auth';
 
-interface LoginBody {
+export interface LoginBody {
   username: string;
   password: string;
 }
 
-interface UserData {
+export interface UserData {
   id: number;
   username: string;
   email: string;
@@ -31,7 +31,7 @@ interface UserData {
   is_admin: boolean;
 }
 
-interface LoginResponse {
+export interface LoginResponse {
   refresh: string;
   access: string;
   user_data: UserData;
@@ -53,31 +53,28 @@ export default function LoginScreen() {
       }
       setIsLoading(true);
       setErrorMessage('');
-      const axiosClient = new AxiosClient();
       const storage = new MemoryStorage();
       storage.removeItem(ACCESS_TOKEN_KEY);
       storage.removeItem(REFRESH_TOKEN_KEY);
 
-      const response = await axiosClient.post<LoginBody, LoginResponse>('/account/login/', {
+      const data = await login({
         username,
         password,
       });
-
-      if (response.status === 200) {
-        await storage.setItem(ACCESS_TOKEN_KEY, response.data.access);
-        await storage.setItem(REFRESH_TOKEN_KEY, response.data.refresh);
-        setIsLoggedIn(true);
-        if (response.data.user_data.is_admin) {
-          router.replace('/admin');
-          storage.setItem(ROLE, 'admin');
-          return;
-        } else if (response.data.user_data.is_reviewer) {
-          storage.setItem(ROLE, 'reviewer');
-        }
-        router.replace('/review/reviews');
+      await storage.setItem(ACCESS_TOKEN_KEY, data.access);
+      await storage.setItem(REFRESH_TOKEN_KEY, data.refresh);
+      await storage.setItem('user', JSON.stringify(data.user_data));
+      setIsLoggedIn(true);
+      if (data.user_data.is_admin) {
+        router.replace('/(tabs)');
+        storage.setItem(ROLE, 'admin');
+        return;
+      } else if (data.user_data.is_reviewer) {
+        storage.setItem(ROLE, 'reviewer');
       }
+      router.replace('/');
     } catch (error: any) {
-      console.log(error.response?.data);
+      // console.log(error.response?.data);
       if (isAxiosError(error)) {
         setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
       } else {

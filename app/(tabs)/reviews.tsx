@@ -53,14 +53,10 @@ const ReviewNeededTasksScreen: React.FC = () => {
     }
   };
 
-  const handleBackNavigation = (): void => {
-    router.push('/tasks/history');
-  };
-
   if (loading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color="#F97316" />
       </SafeAreaView>
     );
   }
@@ -68,7 +64,7 @@ const ReviewNeededTasksScreen: React.FC = () => {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-row items-center px-4 py-4 border-b border-border">
-        <TouchableOpacity onPress={handleBackNavigation} className="mr-4">
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text className="text-xl flex-1 font-bold text-center text-foreground">
@@ -81,7 +77,7 @@ const ReviewNeededTasksScreen: React.FC = () => {
           <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
             <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
             <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
-            <Text className="mb-1 text-foreground">Text: {task.data}</Text>
+            <Text className="mb-1 text-foreground">Text: {task.text}</Text>
             <Text className="mb-1 text-foreground">
               AI Classification: {task.ai_classification}
             </Text>

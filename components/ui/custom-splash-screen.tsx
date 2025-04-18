@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { cn } from '@/lib/cn';
+import { View, Text, ActivityIndicator } from 'react-native';
+//import { cn } from '@/lib/cn';
 //import * as SplashScreen from 'expo-splash-screen';
 
 const CustomSplashScreen = () => {
@@ -30,6 +30,7 @@ const CustomSplashScreen = () => {
       <Text className="text-lg text-foreground font-medium my-3 text-center">
         Your go to AI Data Processor
       </Text>
+      <ActivityIndicator size="large" color="#F97316" />
     </View>
   );
 };
