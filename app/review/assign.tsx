@@ -3,12 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-import { MemoryStorage } from '@/utils/storage';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/constants';
-import { BASE_API_URL } from '@/constants/env-vars';
 import { ReviewTask } from '../../components/types/review-task';
-import { fetchAssignedTasks } from '@/services/apis/review';
+import { fetchAssignedTasks } from '@/services/apis/task';
 
 // Define the RawTask type locally
 export interface RawTask {
@@ -37,38 +33,6 @@ export interface RawTask {
   group: number;
 }
 
-const storage = new MemoryStorage();
-
-const redirectToLogin = () => {
-  Alert.alert('Session Expired', 'Please log in again.');
-};
-
-const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
-  const refreshUrl = `${BASE_API_URL}/account/token/refresh/`;
-  try {
-    const refreshResponse = await fetch(refreshUrl, {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refresh: refreshToken }),
-    });
-    if (!refreshResponse.ok) {
-      const errorResponse = await refreshResponse.json();
-      console.error('Error refreshing token:', errorResponse);
-      redirectToLogin();
-      return null;
-    }
-    const refreshedTokens = await refreshResponse.json();
-    return refreshedTokens.access;
-  } catch (error) {
-    console.error('Refresh token request failed:', error);
-    redirectToLogin();
-    return null;
-  }
-};
-
 const fetchTasks = async () => {
   try {
     const data = await fetchAssignedTasks();
@@ -90,6 +54,8 @@ const normalizeTasks = (tasks: RawTask[]): ReviewTask[] => {
     // Provide a fallback so that final_label is always a string.
     final_label: task.final_label ?? 'None',
     priority: task.priority,
+    processing_status: task.processing_status,
+    assigned_to: task.assigned_to,
     created_at: task.created_at,
   }));
 };
@@ -154,6 +120,19 @@ const AssignedTasksScreen = () => {
             <Text className="mb-1 text-foreground">Human Reviewed: {task.human_reviewed}</Text>
             <Text className="mb-1 text-foreground">Final Label: {task.final_label || 'None'}</Text>
             <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
+            <Text className="mb-1 text-foreground">Assigned To: {task.assigned_to}</Text>
+            <Text
+              className={`mb-1 font-medium ${
+                task.processing_status === 'COMPLETED'
+                  ? 'text-green-500'
+                  : task.processing_status === 'ASSIGNED_REVIEWER'
+                    ? 'text-red-500'
+                    : 'text-foreground'
+              }`}
+            >
+              Processing Status: {task.processing_status}
+                       
+            </Text>
             <Text className="mb-1 text-foreground">
               Created At: {new Date(task.created_at).toLocaleString()}
             </Text>

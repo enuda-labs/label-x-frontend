@@ -8,4 +8,6 @@ export interface ReviewTask {
   final_label: string;
   priority: string;
   created_at: string;
+  processing_status: string;
+  assigned_to: number;
 }

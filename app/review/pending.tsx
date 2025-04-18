@@ -10,47 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
-import { MemoryStorage } from '@/utils/storage';
 import { ReviewTask } from '../../components/types/review-task';
-import { fetchPendingReviews } from '@/services/apis/review';
+import { fetchPendingReviews } from '@/services/apis/task';
 import { isAxiosError } from 'axios';
-
-const storage = new MemoryStorage();
-
-// const redirectToLogin = () => {
-//   Alert.alert('Session Expired', 'Please log in again.');
-// };
-
-// const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
-//   try {
-//     const res = await fetch(`${BASE_API_URL}/account/token/refresh/`, {
-//       method: 'POST',
-//       headers: {
-//         accept: 'application/json',
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ refresh: refreshToken }),
-//     });
-
-//     if (!res.ok) {
-//       const error = await res.json();
-//       console.error('Failed to refresh token:', error);
-//       redirectToLogin();
-//       return null;
-//     }
-
-//     const data = await res.json();
-//     const newAccessToken = data.access;
-
-//     await storage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
-//     return newAccessToken;
-//   } catch (error) {
-//     console.error('Token refresh error:', error);
-//     redirectToLogin();
-//     return null;
-//   }
-// };
 
 const fetchReviews = async (): Promise<ReviewTask[]> => {
   try {
@@ -64,6 +26,8 @@ const fetchReviews = async (): Promise<ReviewTask[]> => {
       human_reviewed: task.human_reviewed ? 'Yes' : 'No',
       final_label: task.final_label,
       priority: task.priority,
+      processing_status: task.processing_status,
+      assigned_to: task.assigned_to,
       created_at: task.created_at,
     }));
   } catch (err) {

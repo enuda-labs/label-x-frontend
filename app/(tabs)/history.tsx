@@ -3,11 +3,12 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { fetchTasks } from '@/services/apis/review';
+import { fetchTasks } from '@/services/apis/task';
 
 // Define the Task interface
 export interface Task {
   id: string;
+  data: string;
   serial_no: string;
   task_type: string;
 }
@@ -15,7 +16,6 @@ export interface Task {
 const fetchMyTasks = async () => {
   try {
     const tasks = await fetchTasks();
-
     return tasks;
   } catch (error) {
     console.error('Error fetching tasks:', error);
@@ -71,16 +71,12 @@ const TaskHistoryScreen = () => {
               size={24}
               color="#F97316"
             />
-            <Text className="ml-3 text-lg font-medium text-foreground">{task.serial_no}</Text>
+            <Text className="ml-3 text-lg font-medium text-foreground">{task.data}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
   );
-};
-
-const redirectToLogin = () => {
-  Alert.alert('Session Expired', 'Please log in again.');
 };
 
 export default TaskHistoryScreen;

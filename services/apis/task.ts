@@ -6,7 +6,7 @@ import { AxiosClient } from '@/utils/axios';
 const axiosClient = new AxiosClient();
 
 export const fetchAssignedTasks = async () => {
-  const response = await axiosClient.get<RawTask[]>('tasks/assigned-task/');
+  const response = await axiosClient.get<RawTask[]>('tasks/assigned-task');
   return response.data;
 };
 
@@ -32,5 +32,10 @@ export const fetchPendingReviews = async () => {
 
 export const fetchTasks = async () => {
   const response = await axiosClient.get<Task[]>('tasks/my-tasks/');
+  return response.data;
+};
+
+export const submitReview = async (payload: any) => {
+  const response = await axiosClient.get<Task[]>('tasks/submit-review/', payload);
   return response.data;
 };

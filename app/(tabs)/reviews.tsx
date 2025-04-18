@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
-import { assignTask, fetchReviewTasks } from '@/services/apis/review';
+import { assignTask, fetchReviewTasks } from '@/services/apis/task';
 import { isAxiosError } from 'axios';
 
 const ReviewNeededTasksScreen: React.FC = () => {

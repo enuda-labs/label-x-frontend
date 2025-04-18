@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
 import { isAxiosError } from 'axios';
-import { fetchPendingReviews } from '@/services/apis/review';
+import { fetchPendingReviews } from '@/services/apis/task';
 
 const fetchReviews = async (): Promise<ReviewTask[]> => {
   try {
@@ -19,6 +19,8 @@ const fetchReviews = async (): Promise<ReviewTask[]> => {
       human_reviewed: task.human_reviewed ? 'Yes' : 'No',
       final_label: task.final_label,
       priority: task.priority,
+      processing_status: task.processing_status,
+      assigned_to: task.assigned_to,
       created_at: task.created_at,
     }));
   } catch (err) {

@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
-import { assignTask, fetchReviewTasks } from '@/services/apis/review';
+import { assignTask, fetchReviewTasks } from '@/services/apis/task';
+import { isAxiosError } from 'axios';
 
 const ReviewNeededTasksScreen: React.FC = () => {
   const [tasks, setTasks] = useState<ReviewTask[]>([]);
@@ -13,10 +14,17 @@ const ReviewNeededTasksScreen: React.FC = () => {
 
   useEffect(() => {
     const loadTasks = async () => {
-      const fetchedTasks = await fetchReviewTasks();
-      setTasks(fetchedTasks);
-
-      setLoading(false);
+      try {
+        const fetchedTasks = await fetchReviewTasks();
+        setTasks(fetchedTasks);
+      } catch (error) {
+        if (isAxiosError(error)) {
+          return console.log(error.response?.data || 'Failed to load tasks');
+        }
+        console.log('Failed to load tasks.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadTasks();

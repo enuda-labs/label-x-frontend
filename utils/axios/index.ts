@@ -72,7 +72,7 @@ export class AxiosClient {
     this._axiosClient.interceptors.response.use(
       response => response,
       async (error: AxiosError<Error>) => {
-        if (error.config && error?.response?.status === 401) {
+        if (error?.config && error?.response?.status === 401) {
           const tokenExists = (await this._storageClass.getItem(ACCESS_TOKEN_KEY)) != null;
           if (tokenExists) {
             this._onAccessTokenExpire?.(error);
