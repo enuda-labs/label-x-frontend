@@ -60,7 +60,7 @@ export default function SplashScreen() {
 
         <View className="flex-col lg:flex-row items-center justify-center gap-4 w-full max-w-xs">
           <Button onPress={handleGetStarted} className="w-full">
-           Sign In
+            Sign In
           </Button>
 
           <Button variant="outline" onPress={handleSignUp} className="w-full">

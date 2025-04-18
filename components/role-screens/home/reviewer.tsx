@@ -32,9 +32,9 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
     : undefined,
   human_review: raw?.human_review
     ? {
-      correction: raw.human_review.correction ?? null,
-      justification: raw.human_review.justification ?? null,
-    }
+        correction: raw.human_review.correction ?? null,
+        justification: raw.human_review.justification ?? null,
+      }
     : undefined,
 });
 
@@ -95,14 +95,11 @@ export default function ReviewerDashboard() {
     loadData();
   }, []);
 
-  const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A')
-
-
+  const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
 
   const handleMenuPress = () => {
     router.push('/tasks/history');
   };
-
 
   const getClassificationColor = (classification: string) => {
     switch (classification.toLowerCase()) {
@@ -156,8 +153,12 @@ export default function ReviewerDashboard() {
           </View>
         </View>
         <View className="flex-row flex-wrap">
-          <Text className={`text-xs mr-4 ${classificationColor}`}>AI: {task.ai_classification}</Text>
-          <Text className="text-gray-400 text-xs mr-4">Confidence: {(task.confidence * 100).toFixed(1)}%</Text>
+          <Text className={`text-xs mr-4 ${classificationColor}`}>
+            AI: {task.ai_classification}
+          </Text>
+          <Text className="text-gray-400 text-xs mr-4">
+            Confidence: {(task.confidence * 100).toFixed(1)}%
+          </Text>
           <Text className="text-gray-400 text-xs mr-4">Priority: {capitalize(task.priority)}</Text>
           <Text className="text-gray-400 text-xs mr-4">
             Created: {new Date(task.created_at).toLocaleDateString()}
