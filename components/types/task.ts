@@ -14,3 +14,28 @@ export type Task = {
   task_id: number;
   data?: string;
 };
+
+export type fetchTaskResponse = {
+  status: string;
+  data: {
+    task_id: number;
+    serial_no: string;
+    task_type: string;
+    processing_status: string;
+    human_reviewed: boolean;
+    ai_output: {
+      text: string;
+      confidence: number;
+      human_review: {
+        correction: null;
+        justification: null;
+      };
+      classification: string;
+      requires_human_review: boolean;
+    };
+    submitted_by: string;
+    assigned_to: string;
+    created_at: string;
+    updated_at: string;
+  };
+};

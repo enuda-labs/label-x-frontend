@@ -18,7 +18,6 @@ export default function TabsLayout() {
         <Tabs.Screen name="index" />
         <Tabs.Screen name="reviews" />
         {isAdmin ? <Tabs.Screen name="Assign" /> : <Tabs.Screen name="pending" />}
-        <Tabs.Screen name="history" />
       </Tabs>
     </AuthGate>
   );

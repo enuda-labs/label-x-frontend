@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -65,6 +72,10 @@ const PendingReviewsTasksScreen = () => {
     }
   };
 
+  const handleSubmitForReview = (taskId: string) => {
+    router.push(`/review/justify?taskId=${taskId}`);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-background px-4 pt-4">
       <View className="flex-row justify-around items-center mb-4">
@@ -85,7 +96,9 @@ const PendingReviewsTasksScreen = () => {
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#F97316" />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F97316" />
+        </View>
       ) : error ? (
         <Text className="text-center text-red-600 mt-4">{error}</Text>
       ) : tasks.length === 0 ? (
@@ -113,6 +126,13 @@ const PendingReviewsTasksScreen = () => {
               </Text>
               <Text className="text-sm mb-1 text-white">Priority: {task.priority}</Text>
               <Text className="text-sm text-white">Created At: {task.created_at}</Text>
+              <TouchableOpacity
+                onPress={() => handleSubmitForReview(task.id)}
+                style={{ backgroundColor: '#F97316' }}
+                className="mt-2 self-start px-3 py-2 rounded"
+              >
+                <Text className="text-white font-medium">Review</Text>
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
