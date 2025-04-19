@@ -30,9 +30,9 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
   ai_output: raw.ai_output ?? null,
   human_review: raw.human_review
     ? {
-        correction: raw.human_review.correction ?? null,
-        justification: raw.human_review.justification ?? null,
-      }
+      correction: raw.human_review.correction ?? null,
+      justification: raw.human_review.justification ?? null,
+    }
     : undefined,
 })
 
@@ -96,6 +96,12 @@ export default function ReviewerDashboard() {
   const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A')
 
 
+
+  const handleMenuPress = () => {
+    router.push('/tasks/history');
+  };
+
+
   const getClassificationColor = (classification: string) => {
     switch (classification.toLowerCase()) {
       case 'safe':
@@ -130,7 +136,7 @@ export default function ReviewerDashboard() {
                 <Text className="text-primary text-xs ml-1">Pending</Text>
               </>
             ) : (
-             <>
+              <>
                 <Ionicons
                   name={task.final_label === 'safe' ? 'checkmark-circle-outline' : 'close-circle-outline'}
                   size={16}
@@ -144,7 +150,7 @@ export default function ReviewerDashboard() {
           </View>
         </View>
         <View className="flex-row flex-wrap">
-        <Text className={`text-xs mr-4 ${classificationColor}`}>AI: {task.ai_classification}</Text>
+          <Text className={`text-xs mr-4 ${classificationColor}`}>AI: {task.ai_classification}</Text>
           <Text className="text-gray-400 text-xs mr-4">Confidence: {(task.confidence * 100).toFixed(1)}%</Text>
           <Text className="text-gray-400 text-xs mr-4">Priority: {capitalize(task.priority)}</Text>
           <Text className="text-gray-400 text-xs mr-4">Created: {new Date(task.created_at).toLocaleDateString()}</Text>
@@ -158,7 +164,7 @@ export default function ReviewerDashboard() {
     <PageContainer>
       <View className="flex-row items-center justify-between">
         <View className="mb-4 flex-row items-center pt-2 pb-3">
-          <TouchableOpacity className="p-2">
+          <TouchableOpacity className="p-2" onPress={handleMenuPress}>
             <Feather name="menu" size={24} color="#fff" />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Welcome, {user || 'Reviewer'}</Text>
