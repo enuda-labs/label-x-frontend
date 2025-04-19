@@ -200,7 +200,10 @@ export default function ReviewerDashboard() {
           </View>
         </TouchableOpacity>
 
-        <View className="bg-card w-[48%] p-4 rounded-lg shadow-md mb-3">
+        <TouchableOpacity
+          onPress={() => router.push('/(tabs)/pending')}
+          className="bg-card w-[48%] p-4 rounded-lg shadow-md mb-3"
+        >
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-primary text-sm">Pending</Text>
             <Ionicons name="alert-circle-outline" size={20} color="#F97316" />
@@ -211,7 +214,7 @@ export default function ReviewerDashboard() {
               <Text className="text-black text-xs">Priority</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView className="mb-4">

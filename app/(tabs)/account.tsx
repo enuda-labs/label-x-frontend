@@ -13,11 +13,11 @@ export default function AccountScreen() {
   const { setIsLoggedIn, user, role } = useGlobalStore();
   const [avatar, setAvatar] = useState({
     name: user,
-    profilePicture: null,
+    profilePicture: '',
   });
 
   const handleProfilePictureChange = (uri: string) => {
-    setUser(prev => ({ ...prev, profilePicture: uri }));
+    // setUser(prev => ({ ...prev, profilePicture: uri }));
   };
   const handleLogout = async () => {
     const storage = new MemoryStorage();
@@ -45,7 +45,11 @@ export default function AccountScreen() {
 
         {/* Profile */}
         <View className="items-center mb-6">
-          <ProfileAvatar user={avatar} onImageChange={handleProfilePictureChange} size={80} />
+          <ProfileAvatar
+            user={{ ...avatar, name: avatar.name || 'Guest' }}
+            onImageChange={handleProfilePictureChange}
+            size={80}
+          />
         </View>
 
         {/* Personal Info */}
@@ -62,7 +66,7 @@ export default function AccountScreen() {
           ))}
           <View className="flex-row justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
             <Text className="text-sm text-white">Role</Text>
-            <Text className="text-sm font-medium bg-primary py-1.5 px-2 rounded-xl text-white uppercase">
+            <Text className="text-sm font-medium bg-primary py-1.5 px-2 rounded-xl text-white capitalize">
               {role}
             </Text>
           </View>
