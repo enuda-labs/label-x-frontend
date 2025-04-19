@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
 import { isAxiosError } from 'axios';
@@ -42,23 +42,38 @@ const PendingReviewsTasksScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const fetchedTasks = await fetchReviews();
-        setTasks(fetchedTasks);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          return setError(error.response?.data || 'Failed to load tasks');
-        }
-        setError('Failed to load tasks.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true;
 
-    loadTasks();
-  }, []);
+      const loadTasks = async () => {
+        try {
+          const fetchedTasks = await fetchReviews();
+          if (isActive) {
+            setTasks(fetchedTasks);
+          }
+        } catch (error) {
+          if (isActive) {
+            if (isAxiosError(error)) {
+              setError(error.response?.data || 'Failed to load tasks');
+            } else {
+              setError('Failed to load tasks.');
+            }
+          }
+        } finally {
+          if (isActive) {
+            setLoading(false);
+          }
+        }
+      };
+
+      loadTasks();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   const handleAssignedPress = () => {
     router.push('/review/assign');
@@ -73,7 +88,9 @@ const PendingReviewsTasksScreen = () => {
   };
 
   const handleSubmitForReview = (taskId: string) => {
-    router.push(`/review/justify?taskId=${taskId}`);
+    router.push(
+      `/review/justify?taskId=${taskId}&data=${JSON.stringify(tasks.find(task => task.id === taskId))}`
+    );
   };
 
   return (

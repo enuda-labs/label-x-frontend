@@ -2,7 +2,7 @@
 
 export type Task = {
   id: string;
-  title: string;
+  text: string;
   task_type: 'TEXT' | 'IMAGE' | 'VIDEO';
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
   assigned_to: string | null;
