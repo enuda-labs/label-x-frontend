@@ -16,10 +16,10 @@ import { ReviewTask } from '@/components/types/review-task';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { fetchTask, submitReview } from '@/services/apis/task';
-import { Task } from '@/components/types/task';
-import { MemoryStorage } from '@/utils/storage';
-import { BASE_API_URL } from '@/constants/env-vars';
-import { ACCESS_TOKEN_KEY } from '@/constants';
+// import { Task } from '@/components/types/task';
+// import { MemoryStorage } from '@/utils/storage';
+// import { BASE_API_URL } from '@/constants/env-vars';
+// import { ACCESS_TOKEN_KEY } from '@/constants';
 import { isAxiosError } from 'axios';
 
 interface ReviewScreenProps {
@@ -49,6 +49,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
         // If fetchTask prop exists, use it to get task data
         // const taskData = await fetchTask(taskId);
         setTask(JSON.parse(taskData) as ReviewTask);
+        //console.log(taskData)
       } catch (error) {
         console.log('Error fetching task:', error);
         setMessages([
@@ -74,10 +75,10 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
 
   const handleSend = async () => {
     if (!message.trim() || !task) return;
-
-    // human message
+  
+    // Append human message
     setMessages(prev => [...prev, { type: 'human', text: message }]);
-
+  
     try {
       const data = {
         task_id: taskId,
@@ -87,12 +88,23 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
       };
       const res = await submitReview(data);
       setHideInput(true);
-      console.log(res);
+  
+      // Assuming the response has `content`, `classification`, `confidence`
+      //const { content, classification, confidence } = res.data;
+  
+      const reviewSummary = `
+  Content: ${ task?.text}
+  Classification: ${ 'Highly Offensive'}
+  Confidence: ${1}
+  
+  Thank you for your review. Your feedback has been recorded.
+      `.trim();
+  
       setMessages(prev => [
         ...prev,
         {
           type: 'ai',
-          text: 'Thank you for your review. Your feedback has been recorded.',
+          text: reviewSummary,
         },
       ]);
     } catch (error) {
@@ -102,9 +114,10 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
         console.error('Error in onSubmitReview:', error);
       }
     }
-
+  
     setMessage('');
   };
+  
 
   const handleChangeLabel = (newLabel: string) => {
     setFinalLabel(newLabel);
@@ -138,7 +151,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
       </SafeAreaView>
     );
   }
-
+//console.log('task', task)
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView className="flex-1 bg-background">
