@@ -13,7 +13,7 @@ export default function TabsLayout() {
         screenOptions={{
           headerShown: false,
         }}
-        tabBar={props => <TabBar {...props} isAdmin={isAdmin} />}
+        tabBar={props => (role ? <TabBar {...props} isAdmin={isAdmin} /> : null)}
       >
         <Tabs.Screen name="index" />
         <Tabs.Screen name="reviews" />
