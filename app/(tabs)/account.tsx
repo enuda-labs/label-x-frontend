@@ -30,9 +30,9 @@ export default function AccountScreen() {
       <ScrollView className="px-4 py-6">
         {/* Header with Logout */}
         <View className="flex-row items-center justify-between mb-4">
-          <TouchableOpacity>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back()}>
+  <Ionicons name="arrow-back" size={24} color="#fff" />
+</TouchableOpacity>
           <Text className="text-lg font-semibold text-white">Account</Text>
           <TouchableOpacity onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={24} color="#fff" />
