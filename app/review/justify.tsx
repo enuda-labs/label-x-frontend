@@ -302,7 +302,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
 
             {/* Messages */}
             {messages.length > 0 && (
-              <View className="px-4 flex-1">
+              <View className="pt-4 px-4 flex-1">
                 <Text className="text-primary font-semibold mb-2">Justify Review</Text>
                 <View className="flex-1">
                   {messages.map((msg, index) => (
