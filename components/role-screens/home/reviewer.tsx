@@ -13,7 +13,7 @@ import {
 import { Task } from '@/components/types/task';
 import { RawTask } from '@/components/types/raw-task';
 import { ReviewTask } from '@/components/types/review-task';
-
+//import { fetchTasks } from '@/services/apis/task';
 // Map a RawTask (from assigned tasks API) into a ReviewTask
 const mapRawToReview = (raw: RawTask): ReviewTask => ({
   id: raw.id.toString(),
@@ -37,6 +37,16 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
       }
     : undefined,
 });
+
+const fetchMyTasks = async () => {
+  try {
+    const tasks = await fetchTasks();
+    return tasks;
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    return [];
+  }
+};
 
 // Map a basic Task (from my-tasks API) into a ReviewTask shape
 const mapTaskToReview = (task: Task): ReviewTask => ({
@@ -71,13 +81,15 @@ export default function ReviewerDashboard() {
       const myTasksRaw = await fetchTasks();
 
       // Map all RawTask arrays into ReviewTask
-      const assigned = assignedRaw.map((raw: any) => mapRawToReview(raw));
-      const reviewNeeded = reviewRaw.map((raw: any) => mapRawToReview(raw));
-      const pending = pendingRaw.map((raw: any) => mapRawToReview(raw));
-      const myTasks = myTasksRaw.map(mapTaskToReview);
+
+      const assigned = assignedRaw.map(mapRawToReview);
+      const reviewNeeded = (reviewRaw as RawTask[]).map(mapRawToReview);
+     // const myTasks = myTasksRaw.slice(0,1).map(mapTaskToReview);
+//console.log(myTasks)
 
       // Compute stats based on assigned tasks
       const pendingCount = assigned.filter(t => t.processing_status === 'ASSIGNED_REVIEWER').length;
+      const history = assigned.filter(t => t.processing_status === 'COMPLETED');
       const completedCount = assigned.length - pendingCount;
       const urgentCount = assigned.filter(t => t.priority === 'urgent').length;
 
@@ -90,7 +102,7 @@ export default function ReviewerDashboard() {
 
       // Now set tasks with proper mapped fields
       setNewTasks(reviewNeeded);
-      setRecentReviews(pending);
+      setRecentReviews(history.slice(0,1));
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -107,7 +119,7 @@ export default function ReviewerDashboard() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [router]);
 
   const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
 
@@ -141,30 +153,35 @@ export default function ReviewerDashboard() {
             <Text className="text-gray-400 text-xs mt-1">{task.data}</Text>
           </View>
           <View className="flex-row items-center">
-            {task.processing_status === 'ASSIGNED_REVIEWER' ? (
-              <>
-                <Ionicons name="time-outline" size={16} color="#F97316" />
-                <Text className="text-primary text-xs ml-1">Pending</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons
-                  name={
-                    task.final_label === 'safe'
-                      ? 'checkmark-circle-outline'
-                      : 'close-circle-outline'
-                  }
-                  size={16}
-                  color={task.final_label === 'safe' ? '#34D399' : '#F87171'}
-                />
-                <Text
-                  className={`text-xs ml-1 ${task?.final_label === 'safe' ? 'text-green-400' : 'text-red-400'}`}
-                >
-                  {labelText}
-                </Text>
-              </>
-            )}
-          </View>
+  {task.processing_status === 'ASSIGNED_REVIEWER' ? (
+    <>
+      <Ionicons name="time-outline" size={16} color="#F97316" />
+      <Text className="text-primary text-xs ml-1">Pending</Text>
+    </>
+  ) : task.processing_status === 'COMPLETED' ? (
+    <>
+      <Ionicons
+        name={
+          
+            'checkmark-circle-outline'
+           
+        }
+        size={16}
+        color= '#34D399'
+      />
+      <Text
+        className="text-xs ml-1 text-green-400">
+        Completed
+      </Text>
+    </>
+  ) : (
+    <>
+      <Ionicons name="help-circle-outline" size={16} color="#fff500" />
+      <Text className="text-xs ml-1 text-yellow-500">Unassigned</Text>
+    </>
+  )}
+</View>
+
         </View>
         <View className="flex-row flex-wrap">
           <Text className={`text-xs mr-4 ${classificationColor}`}>
@@ -237,28 +254,27 @@ export default function ReviewerDashboard() {
           </TouchableOpacity>
         </View>
 
-        <View className="mb-4">
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-white text-xl font-bold">New Tasks</Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/reviews')}>
-              <Text className="text-primary text-sm">See all</Text>
-            </TouchableOpacity>
-          </View>
-
-          {newTasks.map(renderTaskCard)}
+       <ScrollView className="mb-4">
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-white text-xl font-bold">New Tasks</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/reviews')}>
+            <Text className="text-primary text-sm">See all</Text>
+          </TouchableOpacity>
         </View>
 
-        <View className="mb-4">
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-white text-xl font-bold">Recent Reviews</Text>
-            <TouchableOpacity onPress={() => router.push('/tasks/history')}>
-              <Text className="text-primary text-sm">See all</Text>
-            </TouchableOpacity>
-          </View>
+        {newTasks.map(renderTaskCard)}
+      </ScrollView>
 
-          {recentReviews.map(renderTaskCard)}
+      <ScrollView className="mb-4">
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-white text-xl font-bold">Recent Reviews</Text>
+          <TouchableOpacity onPress={() => router.push('/tasks/history')}>
+            <Text className="text-primary text-sm">See all</Text>
+          </TouchableOpacity>
         </View>
 
+        {recentReviews.map(renderTaskCard)}
+      </ScrollView>
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-white text-xl font-bold">My Performance</Text>

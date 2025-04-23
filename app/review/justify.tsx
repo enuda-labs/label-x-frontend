@@ -22,6 +22,7 @@ import { ACCESS_TOKEN_KEY } from '@/constants';
 import { BASE_API_URL } from '@/constants/env-vars';
 import { completeReview } from '@/services/apis/task';
 
+
 interface ReviewScreenProps {
   isLoading?: boolean;
 }
@@ -65,6 +66,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
       setIsLoading(true);
       try {
         setTask(JSON.parse(taskData) as ReviewTask);
+        //console.log(taskData)
       } catch (error) {
         console.log('Error fetching task:', error);
         setMessages([
@@ -202,6 +204,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
     setMessage('');
     setUserClassification('');
   };
+  
 
   const handleComplete = async () => {
     try {
@@ -250,7 +253,7 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
       </SafeAreaView>
     );
   }
-
+//console.log('task', task)
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView className="flex-1 bg-background">

@@ -30,9 +30,9 @@ const TaskHistoryScreen = () => {
     loadTasks();
   }, []);
 
-  const handleReviewPress = () => {
-    router.push('/review/reviews');
-  };
+  // const handleReviewPress = () => {
+  //   router.push('/review/reviews');
+  // };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -44,9 +44,9 @@ const TaskHistoryScreen = () => {
           <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
         <Text className="text-xl flex-1 font-bold text-center text-white">Task History</Text>
-        <TouchableOpacity onPress={handleReviewPress} className="ml-4">
+        {/* <TouchableOpacity onPress={handleReviewPress} className="ml-4">
           <MaterialCommunityIcons name="menu" size={24} color="#fff" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* <TouchableOpacity onPress={handlePendingPress} className="ml-4">
           <Text className="text-xl flex-1 font-bold text-center text-white">Pending Review</Text>
         </TouchableOpacity> */}

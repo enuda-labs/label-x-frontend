@@ -75,11 +75,10 @@ const AssignedTasksScreen = () => {
 
     loadAssignedTasks();
   }, []);
-
-  const handleSubmitForReview = (taskId: string) => {
-    router.push(
-      `/review/justify?taskId=${taskId}&data=${encodeURIComponent(JSON.stringify(tasks.find(task => task.id === taskId)))}`
-    );
+  
+  const handleSubmitForReview = (taskId: string, taskData: ReviewTask) => {
+    const encodedData = encodeURIComponent(JSON.stringify(taskData));
+    router.push(`/review/justify?taskId=${taskId}&data=${encodedData}`);
   };
 
   const handleBackNavigation = () => {
@@ -140,7 +139,7 @@ const AssignedTasksScreen = () => {
             </Text>
             {task.processing_status === 'ASSIGNED_REVIEWER' && (
               <TouchableOpacity
-                onPress={() => handleSubmitForReview(task.id)}
+                onPress={() => handleSubmitForReview(task.id, task)}
                 style={{ backgroundColor: '#F97316' }}
                 className="mt-2 self-start px-3 py-2 rounded"
               >
