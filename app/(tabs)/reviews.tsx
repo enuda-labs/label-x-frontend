@@ -78,7 +78,7 @@ const ReviewNeededTasksScreen: React.FC = () => {
             <View key={task.id} className="mb-4 p-4 border border-border rounded-lg bg-card">
               <Text className="mb-1 font-bold text-foreground">ID: {task.id}</Text>
               <Text className="mb-1 text-foreground">Serial No: {task.serial_no}</Text>
-              <Text className="mb-1 text-foreground">Text: {task.text}</Text>
+              <Text className="mb-1 text-foreground">Text: {task.data}</Text>
               <Text className="mb-1 text-foreground">
                 AI Classification: {task.ai_classification}
               </Text>

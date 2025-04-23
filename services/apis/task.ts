@@ -44,3 +44,13 @@ export const submitReview = async (payload: any) => {
   const response = await axiosClient.post<Task[]>('/tasks/submit-review', payload);
   return response.data;
 };
+
+export const completeReview = async (taskId: string) => {
+  const response = await axiosClient.post<{ task_id: string }, { status: string; message: string }>(
+    '/tasks/review/complete/',
+    {
+      task_id: taskId,
+    }
+  );
+  return response.data;
+};
