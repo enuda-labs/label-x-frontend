@@ -29,7 +29,7 @@ const ReviewNeededTasksScreen: React.FC = () => {
 
     loadTasks();
   }, []);
-//console.log(tasks)
+  //console.log(tasks)
   const handleAssign = async (taskId: string): Promise<void> => {
     const assignTaskToMe = async (): Promise<boolean> => {
       try {
@@ -83,7 +83,9 @@ const ReviewNeededTasksScreen: React.FC = () => {
                 AI Classification: {task?.ai_output?.classification}
               </Text>
               <Text className="mb-1 text-foreground">Confidence: {task.ai_output?.confidence}</Text>
-              <Text className="mb-1 text-foreground">Human Review: {task?.requires_human_review ? 'True' : 'False'}</Text>
+              <Text className="mb-1 text-foreground">
+                Human Review: {task?.requires_human_review ? 'True' : 'False'}
+              </Text>
               <Text className="mb-1 text-foreground">Final Label: {task?.predicted_label}</Text>
               <Text className="mb-1 text-foreground">Priority: {task.priority}</Text>
               <Text className="mb-1 text-foreground">Created At: {task.created_at}</Text>

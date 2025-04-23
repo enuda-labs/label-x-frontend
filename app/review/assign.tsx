@@ -75,7 +75,7 @@ const AssignedTasksScreen = () => {
 
     loadAssignedTasks();
   }, []);
-  
+
   const handleSubmitForReview = (taskId: string, taskData: ReviewTask) => {
     const encodedData = encodeURIComponent(JSON.stringify(taskData));
     router.push(`/review/justify?taskId=${taskId}&data=${encodedData}`);
