@@ -149,6 +149,14 @@ export default function ReviewScreen({ isLoading: initialLoading = false }: Revi
 
     socketRef.current.onerror = error => {
       console.error('WebSocket error:', error);
+      Alert.alert(
+        'Connection Error',
+        'An error occurred while submitting your review. Would you like to retry?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Retry', onPress: () => initializeWebSocket() },
+        ]
+      );
       setMessages(prev => [
         ...prev,
         {
