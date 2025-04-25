@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
 import { assignTask, fetchReviewTasks } from '@/services/apis/task';
@@ -12,23 +12,25 @@ const ReviewNeededTasksScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const fetchedTasks = await fetchReviewTasks();
-        setTasks(fetchedTasks);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          return console.log(error.response?.data || 'Failed to load tasks');
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadTasks = async () => {
+        try {
+          const fetchedTasks = await fetchReviewTasks();
+          setTasks(fetchedTasks);
+        } catch (error) {
+          if (isAxiosError(error)) {
+            return console.log(error.response?.data || 'Failed to load tasks');
+          }
+          console.log('Failed to load tasks.');
+        } finally {
+          setLoading(false);
         }
-        console.log('Failed to load tasks.');
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    loadTasks();
-  }, []);
+      loadTasks();
+    }, [])
+  );
   //console.log(tasks)
   const handleAssign = async (taskId: string): Promise<void> => {
     const assignTaskToMe = async (): Promise<boolean> => {

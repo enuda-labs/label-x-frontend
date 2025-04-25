@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import PageContainer from '@/components/ui/page-container';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useGlobalStore } from '@/context/store';
 import {
   fetchAssignedTasks,
@@ -117,9 +117,11 @@ export default function ReviewerDashboard() {
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, [router]);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
 
