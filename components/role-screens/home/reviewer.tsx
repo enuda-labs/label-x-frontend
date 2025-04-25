@@ -16,7 +16,7 @@ import { ReviewTask } from '@/components/types/review-task';
 import LoaderCard from '@/components/ui/loader-card';
 //import { fetchTasks } from '@/services/apis/task';
 // Map a RawTask (from assigned tasks API) into a ReviewTask
-const mapRawToReview = (raw: RawTask): ReviewTask => ({
+export const mapRawToReview = (raw: RawTask): ReviewTask => ({
   id: raw.id.toString(),
   serial_no: raw.serial_no.toString(),
   data: raw.data ?? '',
@@ -37,6 +37,7 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
         justification: raw.human_review.justification ?? null,
       }
     : undefined,
+  task_type: '',
 });
 
 const fetchMyTasks = async () => {
@@ -62,6 +63,7 @@ const mapTaskToReview = (task: Task): ReviewTask => ({
   created_at: task.created_at,
   processing_status: task.status,
   assigned_to: task?.assigned_to ?? '',
+  task_type: '',
 });
 
 export default function ReviewerDashboard() {
