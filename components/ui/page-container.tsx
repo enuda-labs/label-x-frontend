@@ -13,7 +13,7 @@ interface PageContainerProps {
 const PageContainer = ({ children, scrollable = true }: PageContainerProps) => {
   return (
     <SafeAreaView className="flex-1 bg-background ">
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#F97316" />
       {scrollable ? (
         <ScrollView
           className="flex-1 px-4 bg-background"

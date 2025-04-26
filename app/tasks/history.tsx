@@ -33,9 +33,6 @@ const TaskHistoryScreen = () => {
     };
     loadTasks();
   }, []);
-  // const handleReviewPress = () => {
-  //   router.push('/review/reviews');
-  // };
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -79,7 +76,9 @@ const TaskHistoryScreen = () => {
           tasks.map(task => (
             <TouchableOpacity
               key={task.id}
-              onPress={() => router.push(`/tasks/${task.id}`)}
+              onPress={() =>
+                router.push(`/tasks/${task.id}?data=${encodeURIComponent(JSON.stringify(task))}`)
+              }
               className="p-4 mb-4 border border-border rounded-lg bg-card flex-row items-center"
             >
               <MaterialCommunityIcons
