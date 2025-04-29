@@ -29,6 +29,7 @@ const fetchReviews = async (): Promise<ReviewTask[]> => {
       processing_status: task.processing_status,
       assigned_to: task.assigned_to,
       created_at: task.created_at,
+      task_type: task.task_type,
     }));
   } catch (err) {
     console.error('Error fetching tasks:', err);

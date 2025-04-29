@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import PageContainer from '@/components/ui/page-container';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useGlobalStore } from '@/context/store';
 import {
   fetchAssignedTasks,
@@ -13,9 +13,10 @@ import {
 import { Task } from '@/components/types/task';
 import { RawTask } from '@/components/types/raw-task';
 import { ReviewTask } from '@/components/types/review-task';
+import LoaderCard from '@/components/ui/loader-card';
 //import { fetchTasks } from '@/services/apis/task';
 // Map a RawTask (from assigned tasks API) into a ReviewTask
-const mapRawToReview = (raw: RawTask): ReviewTask => ({
+export const mapRawToReview = (raw: RawTask): ReviewTask => ({
   id: raw.id.toString(),
   serial_no: raw.serial_no.toString(),
   data: raw.data ?? '',
@@ -36,6 +37,7 @@ const mapRawToReview = (raw: RawTask): ReviewTask => ({
         justification: raw.human_review.justification ?? null,
       }
     : undefined,
+  task_type: '',
 });
 
 const fetchMyTasks = async () => {
@@ -61,6 +63,7 @@ const mapTaskToReview = (task: Task): ReviewTask => ({
   created_at: task.created_at,
   processing_status: task.status,
   assigned_to: task?.assigned_to ?? '',
+  task_type: '',
 });
 
 export default function ReviewerDashboard() {
@@ -71,6 +74,7 @@ export default function ReviewerDashboard() {
   const [newTasks, setNewTasks] = useState<ReviewTask[]>([]);
   const [recentReviews, setRecentReviews] = useState<ReviewTask[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadData = async () => {
     try {
@@ -102,9 +106,11 @@ export default function ReviewerDashboard() {
 
       // Now set tasks with proper mapped fields
       setNewTasks(reviewNeeded);
-      setRecentReviews(history.slice(0, 1));
+      setRecentReviews(history.slice(0, 2));
     } catch (error) {
       console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -117,9 +123,11 @@ export default function ReviewerDashboard() {
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, [router]);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const capitalize = (s?: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A');
 
@@ -250,7 +258,16 @@ export default function ReviewerDashboard() {
             </TouchableOpacity>
           </View>
 
-          {newTasks.map(renderTaskCard)}
+          {isLoading ? (
+            <>
+              <LoaderCard />
+              <LoaderCard />
+            </>
+          ) : newTasks.length === 0 ? (
+            <Text className="text-gray-400 text-center mt-4">No new tasks available.</Text>
+          ) : (
+            newTasks.map(renderTaskCard)
+          )}
         </ScrollView>
 
         <ScrollView className="mb-4">
@@ -261,7 +278,16 @@ export default function ReviewerDashboard() {
             </TouchableOpacity>
           </View>
 
-          {recentReviews.map(renderTaskCard)}
+          {isLoading ? (
+            <>
+              <LoaderCard />
+              <LoaderCard />
+            </>
+          ) : recentReviews.length === 0 ? (
+            <Text className="text-gray-400 text-center mt-4">No new tasks available.</Text>
+          ) : (
+            recentReviews.map(renderTaskCard)
+          )}
         </ScrollView>
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">

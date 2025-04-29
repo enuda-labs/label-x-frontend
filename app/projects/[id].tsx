@@ -128,7 +128,9 @@ const ProjectDetails = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <Text className="text-white font-semibold mb-10 text-2xl px-4">Project Details - {name}</Text>
+      <Text className="text-white font-semibold mb-10 text-2xl px-4 pt-4">
+        Project Details - {name}
+      </Text>
       <NavigationIndependentTree>
         <Navigation />
       </NavigationIndependentTree>
