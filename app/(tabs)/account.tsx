@@ -10,7 +10,6 @@ import ProfileAvatar from '@/components/ui/profile';
 import QRCode from 'react-native-qrcode-svg';
 import * as Clipboard from 'expo-clipboard';
 
-// TOTP utility functions
 const generateSecret = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
   let secret = '';
@@ -222,7 +221,7 @@ export default function AccountScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView className="px-4 py-6">
-        {/* Header with Logout */}
+       
         <View className="flex-row items-center justify-between mb-4">
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -265,12 +264,12 @@ export default function AccountScreen() {
             <Text className="text-sm text-white">Email</Text>
             <Text className="text-sm font-medium text-white">john@example.com</Text>
           </View>
-          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-primary">
+          <TouchableOpacity className="flex-row justify-between items-center py-5 border-b border-primary">
             <Text className="text-sm text-white">Update password</Text>
             <Ionicons name="chevron-forward" size={18} color="#fff" />
           </TouchableOpacity>
           
-          {/* 2FA Section */}
+          {/* 2FA Section Starts here */}
           <View className="py-3">
             <View className="flex-row justify-between items-center mb-2">
               <View>
