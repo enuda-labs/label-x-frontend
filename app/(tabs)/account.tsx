@@ -36,8 +36,8 @@ export default function AccountScreen() {
   const router = useRouter();
   const { setIsLoggedIn, user, role } = useGlobalStore();
   const [avatar, setAvatar] = useState({
-    name: user,
-    profilePicture: null,
+    name: user || '',
+    profilePicture: null as string | null,
   });
   
   // 2FA States
@@ -83,7 +83,7 @@ export default function AccountScreen() {
   const handleEnable2FA = () => {
     const newSecret = generateSecret();
     setSecret(newSecret);
-    setQrCodeData(generateQRCodeData(newSecret, user));
+    setQrCodeData(generateQRCodeData(newSecret, user ?? ''));
     setSetupStep(1);
     setShow2FAModal(true);
   };
@@ -236,7 +236,7 @@ export default function AccountScreen() {
 
        
         <View className="items-center mb-6">
-          <ProfileAvatar user={avatar} onImageChange={handleProfilePictureChange} size={80} />
+          <ProfileAvatar user={{ name: avatar.name, profilePicture: avatar.profilePicture ?? undefined }} onImageChange={handleProfilePictureChange} size={80} />
         </View>
 
        
