@@ -1,4 +1,4 @@
-import { Task } from '@/components/types/task';
+import { fetchTaskResponse, Task } from '@/components/types/task';
 import { RawTask } from '@/app/review/assign';
 import { ReviewTask } from '@/components/types/review-task';
 import { AxiosClient } from '@/utils/axios';
@@ -35,7 +35,22 @@ export const fetchTasks = async () => {
   return response.data;
 };
 
+export const fetchTask = async (taskId: string) => {
+  const response = await axiosClient.get<fetchTaskResponse>(`/tasks/status/${taskId}/`);
+  return response.data;
+};
+
 export const submitReview = async (payload: any) => {
   const response = await axiosClient.post<Task[]>('/tasks/submit-review', payload);
+  return response.data;
+};
+
+export const completeReview = async (taskId: string) => {
+  const response = await axiosClient.post<{ task_id: string }, { status: string; message: string }>(
+    '/tasks/review/complete/',
+    {
+      task_id: taskId,
+    }
+  );
   return response.data;
 };

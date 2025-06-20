@@ -27,7 +27,7 @@ const CustomSplashScreen = () => {
         <Text className="text-4xl text-white font-bold">Lx</Text>
       </View>
 
-      <Text className="text-lg text-foreground font-medium my-3 text-center">
+      <Text className="text-lg text-foreground font-medium my-3 text-center mb-4">
         Your go to AI Data Processor
       </Text>
       <ActivityIndicator size="large" color="#F97316" />

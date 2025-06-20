@@ -4,6 +4,10 @@ import { useRouter } from 'expo-router';
 import { AxiosClient } from '@/utils/axios';
 import { isAxiosError } from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MemoryStorage } from '@/utils/storage';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
+import { useGlobalStore } from '@/context/store';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ProjectResponse {
   status: string;
@@ -20,6 +24,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { setIsLoggedIn } = useGlobalStore();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -40,6 +45,16 @@ const Admin = () => {
     fetchProjects();
   }, []);
 
+  const handleLogout = async () => {
+    const storage = new MemoryStorage();
+    await storage.removeItem(ACCESS_TOKEN_KEY);
+    await storage.removeItem(REFRESH_TOKEN_KEY);
+    await storage.removeItem('user');
+    await storage.removeItem(ROLE);
+    setIsLoggedIn(false);
+    router.replace('/auth/login');
+  };
+
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background p-4">
@@ -54,11 +69,8 @@ const Admin = () => {
     <SafeAreaView className="flex-1 bg-background p-4">
       <View className="flex-row justify-between items-center mb-10">
         <Text className="text-white font-semibold text-2xl"> All Projects</Text>
-        <TouchableOpacity
-          onPress={() => router.push('/auth/login')}
-          className="bg-orange-500 p-4 rounded-lg"
-        >
-          <Text className="text-white text-center font-semibold">Logout</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
       {loading && (

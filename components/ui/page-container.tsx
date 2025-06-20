@@ -1,6 +1,5 @@
 import React from 'react';
-import { StatusBar, SafeAreaView, ScrollView, View, Text } from 'react-native';
-import { cn } from '@/lib/cn';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ interface PageContainerProps {
 const PageContainer = ({ children, scrollable = true }: PageContainerProps) => {
   return (
     <SafeAreaView className="flex-1 bg-background ">
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
       {scrollable ? (
         <ScrollView
           className="flex-1 px-4 bg-background"
