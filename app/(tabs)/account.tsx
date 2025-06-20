@@ -128,7 +128,7 @@ export default function AccountScreen() {
     const expectedCode = generateTOTP(secret);
 
     if (disableCode === expectedCode || disableCode === '123456') {
-     
+      
       const storage = new MemoryStorage();
       await storage.removeItem('2fa_enabled');
       await storage.removeItem('2fa_secret');
