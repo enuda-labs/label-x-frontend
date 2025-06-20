@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  Modal,
-  TextInput,
-  Dimensions,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Alert, ScrollView, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -108,7 +99,6 @@ export default function AccountScreen() {
     const expectedCode = generateTOTP(secret);
 
     if (verificationCode === expectedCode || verificationCode === '123456') {
-      
       const storage = new MemoryStorage();
       await storage.setItem('2fa_enabled', 'true');
       await storage.setItem('2fa_secret', secret);
@@ -128,7 +118,6 @@ export default function AccountScreen() {
     const expectedCode = generateTOTP(secret);
 
     if (disableCode === expectedCode || disableCode === '123456') {
-      
       const storage = new MemoryStorage();
       await storage.removeItem('2fa_enabled');
       await storage.removeItem('2fa_secret');
