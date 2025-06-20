@@ -30,13 +30,13 @@ export const AuthGate = ({ children }: Props) => {
 
       // Set logged in state and fetch user details
       setIsLoggedIn(true);
-      
+
       try {
         const axiosClient = new AxiosClient();
         const userResponse = await axiosClient.get<{ status: string; user: UserData }>(
           '/account/user/detail/'
         );
-        
+
         if (userResponse.status === 200) {
           const userData = userResponse.data.user;
           await storage.setItem('user', JSON.stringify(userData));
@@ -58,7 +58,7 @@ export const AuthGate = ({ children }: Props) => {
           router.replace('/auth/login');
         }
       }
-      
+
       setLoading(false);
     };
 
@@ -68,6 +68,6 @@ export const AuthGate = ({ children }: Props) => {
   if (loading) {
     return <CustomSplashScreen />;
   }
-  
+
   return <>{children}</>;
 };
