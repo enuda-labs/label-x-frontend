@@ -21,8 +21,7 @@ const generateSecret = () => {
 };
 
 const generateTOTP = (secret: string) => {
-  // Simple TOTP implementation for demo
-  // In production, use a proper library like 'react-native-otp-generate'
+  //This is where you guys can generate the code fromthe backend.
   const now = Math.floor(Date.now() / 1000);
   const counter = Math.floor(now / 30);
   return String(counter % 1000000).padStart(6, '0');
@@ -40,16 +39,16 @@ export default function AccountScreen() {
     profilePicture: null as string | null,
   });
   
-  // 2FA States
+  
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [show2FAModal, setShow2FAModal] = useState(false);
-  const [showVerifyModal, setShowVerifyModal] = useState(false);
+ // const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [showDisableModal, setShowDisableModal] = useState(false);
   const [secret, setSecret] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [disableCode, setDisableCode] = useState('');
   const [qrCodeData, setQrCodeData] = useState('');
-  const [setupStep, setSetupStep] = useState(1); // 1: QR/Manual, 2: Verify
+  const [setupStep, setSetupStep] = useState(1); 
 
   useEffect(() => {
     loadTwoFactorStatus();
