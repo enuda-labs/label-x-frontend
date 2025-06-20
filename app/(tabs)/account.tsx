@@ -108,7 +108,7 @@ export default function AccountScreen() {
     const expectedCode = generateTOTP(secret);
 
     if (verificationCode === expectedCode || verificationCode === '123456') {
-      // Allow demo code
+      
       const storage = new MemoryStorage();
       await storage.setItem('2fa_enabled', 'true');
       await storage.setItem('2fa_secret', secret);
@@ -128,7 +128,7 @@ export default function AccountScreen() {
     const expectedCode = generateTOTP(secret);
 
     if (disableCode === expectedCode || disableCode === '123456') {
-      // Allow demo code
+     
       const storage = new MemoryStorage();
       await storage.removeItem('2fa_enabled');
       await storage.removeItem('2fa_secret');
