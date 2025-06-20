@@ -258,7 +258,7 @@ export default function AccountScreen() {
           ))}
           <View className="flex-row justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
             <Text className="text-sm text-white">Role</Text>
-            <Text className="text-sm font-medium bg-primary py-1.5 px-2 rounded-xl text-white uppercase">
+            <Text className="text-sm font-medium bg-primary py-1.5 px-2 rounded-xl text-white capitalize">
               {role}
             </Text>
           </View>

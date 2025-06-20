@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ReviewTask } from '../../components/types/review-task';
 import { isAxiosError } from 'axios';
@@ -22,6 +29,7 @@ const fetchReviews = async (): Promise<ReviewTask[]> => {
       processing_status: task.processing_status,
       assigned_to: task.assigned_to,
       created_at: task.created_at,
+      task_type: task.task_type,
     }));
   } catch (err) {
     console.error('Error fetching tasks:', err);
@@ -35,23 +43,38 @@ const PendingReviewsTasksScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const fetchedTasks = await fetchReviews();
-        setTasks(fetchedTasks);
-      } catch (error) {
-        if (isAxiosError(error)) {
-          return setError(error.response?.data || 'Failed to load tasks');
-        }
-        setError('Failed to load tasks.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true;
 
-    loadTasks();
-  }, []);
+      const loadTasks = async () => {
+        try {
+          const fetchedTasks = await fetchReviews();
+          if (isActive) {
+            setTasks(fetchedTasks);
+          }
+        } catch (error) {
+          if (isActive) {
+            if (isAxiosError(error)) {
+              setError(error.response?.data || 'Failed to load tasks');
+            } else {
+              setError('Failed to load tasks.');
+            }
+          }
+        } finally {
+          if (isActive) {
+            setLoading(false);
+          }
+        }
+      };
+
+      loadTasks();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   const handleAssignedPress = () => {
     router.push('/review/assign');
@@ -63,6 +86,11 @@ const PendingReviewsTasksScreen = () => {
     } else {
       router.push('/review/reviews');
     }
+  };
+
+  const handleSubmitForReview = (taskId: string, taskData: ReviewTask) => {
+    const encodedData = encodeURIComponent(JSON.stringify(taskData));
+    router.push(`/review/justify?taskId=${taskId}&data=${encodedData}`);
   };
 
   return (
@@ -85,7 +113,9 @@ const PendingReviewsTasksScreen = () => {
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#F97316" />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#F97316" />
+        </View>
       ) : error ? (
         <Text className="text-center text-red-600 mt-4">{error}</Text>
       ) : tasks.length === 0 ? (
@@ -113,6 +143,13 @@ const PendingReviewsTasksScreen = () => {
               </Text>
               <Text className="text-sm mb-1 text-white">Priority: {task.priority}</Text>
               <Text className="text-sm text-white">Created At: {task.created_at}</Text>
+              <TouchableOpacity
+                onPress={() => handleSubmitForReview(task.id, task)}
+                style={{ backgroundColor: '#F97316' }}
+                className="mt-2 self-start px-3 py-2 rounded"
+              >
+                <Text className="text-white font-medium">Review</Text>
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>

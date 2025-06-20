@@ -103,7 +103,7 @@ export default function ProfileAvatar({ user, onImageChange, size = 80 }: Avatar
 
         {/* Camera Icon */}
         <TouchableOpacity
-          className="absolute bottom-0 right-0 bg-primary p-1 rounded-full border-2 border-white"
+          className="absolute bottom-0 right-0 bg-primary p-1 rounded-full border-2 border-white justify-center items-center"
           style={{ width: size / 3, height: size / 3 }}
           onPress={pickImage}
         >

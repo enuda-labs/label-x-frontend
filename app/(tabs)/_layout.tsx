@@ -13,12 +13,11 @@ export default function TabsLayout() {
         screenOptions={{
           headerShown: false,
         }}
-        tabBar={props => <TabBar {...props} isAdmin={isAdmin} />}
+        tabBar={props => (role ? <TabBar {...props} isAdmin={isAdmin} /> : null)}
       >
         <Tabs.Screen name="index" />
         <Tabs.Screen name="reviews" />
         {isAdmin ? <Tabs.Screen name="Assign" /> : <Tabs.Screen name="pending" />}
-        <Tabs.Screen name="history" />
       </Tabs>
     </AuthGate>
   );
