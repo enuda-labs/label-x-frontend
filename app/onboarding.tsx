@@ -3,12 +3,6 @@ import { View, Text, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/ui/button';
 
-interface AuthResponse {
-  status: string;
-  access: string;
-  refresh: string;
-}
-
 export default function SplashScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;

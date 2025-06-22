@@ -43,7 +43,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setIsLoggedIn, setUser, setRole } = useGlobalStore();
+  const { setIsLoggedIn, setUser } = useGlobalStore();
   const router = useRouter();
 
   const handleLogin = async () => {

@@ -33,7 +33,6 @@ interface Disable2FAAPIResponse {
   success: boolean;
 }
 
-
 // ✅ Change Password Types
 export interface ChangePasswordBody {
   current_password: string;
@@ -48,7 +47,6 @@ export interface ChangePasswordResponse {
   success: boolean;
 }
 
-
 // ✅ Update Username Types
 export interface UpdateUsernameBody {
   username: string;
@@ -60,15 +58,9 @@ export interface UpdateUsernameResponse {
   success: boolean;
 }
 
-
-
-
 // ✅ Login
 export const login = async (payload: LoginBody): Promise<LoginResponse> => {
-  const response = await axiosClient.post<LoginBody, LoginResponse>(
-    '/account/login/',
-    payload
-  );
+  const response = await axiosClient.post<LoginBody, LoginResponse>('/account/login/', payload);
   return response.data;
 };
 
@@ -83,9 +75,7 @@ export const register = async (payload: RegisterBody): Promise<RegisterResponse>
 
 // ✅ Get 2FA Setup Info
 export const get2FASetup = async (): Promise<TwoFASetupData> => {
-  const response = await axiosClient.get<TwoFASetupAPIResponse>(
-    '/account/2fa/setup/'
-  );
+  const response = await axiosClient.get<TwoFASetupAPIResponse>('/account/2fa/setup/');
   return response.data.data;
 };
 
@@ -109,7 +99,6 @@ export const verify2FASetup = async (otp_code: string): Promise<boolean> => {
   return false;
 };
 
-
 // ✅ Disable 2FA with password
 export const disable2FASetup = async (password: string): Promise<boolean> => {
   const response = await axiosClient.post<{ password: string }, Disable2FAAPIResponse>(
@@ -121,19 +110,16 @@ export const disable2FASetup = async (password: string): Promise<boolean> => {
   return response.data.success;
 };
 
-
-
 // ✅ Change Password
-export const changePassword = async (payload: ChangePasswordBody): Promise<ChangePasswordResponse> => {
+export const changePassword = async (
+  payload: ChangePasswordBody
+): Promise<ChangePasswordResponse> => {
   const response = await axiosClient.post<ChangePasswordBody, ChangePasswordResponse>(
     '/account/change-password/',
     payload
   );
   return response.data;
 };
-
-
-
 
 export const updateUsername = async (
   payload: UpdateUsernameBody
