@@ -58,11 +58,10 @@ export default function AccountScreen() {
   }, []);
 
   useEffect(() => {
-  if (userData?.username) {
-    setUsername(userData.username);
-  }
-}, [userData]);
-
+    if (userData?.username) {
+      setUsername(userData.username);
+    }
+  }, [userData]);
 
   const loadUserData = async () => {
     try {
