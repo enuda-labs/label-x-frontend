@@ -43,7 +43,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setIsLoggedIn } = useGlobalStore();
+  const { setIsLoggedIn, setUser, setRole } = useGlobalStore();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -65,6 +65,7 @@ export default function LoginScreen() {
       await storage.setItem(REFRESH_TOKEN_KEY, data.refresh);
       await storage.setItem('user', JSON.stringify(data.user_data));
       setIsLoggedIn(true);
+      setUser({ ...data.user_data, password });
       if (data.user_data.is_admin) {
         router.replace('/(tabs)');
         storage.setItem(ROLE, 'admin');
