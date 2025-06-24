@@ -56,7 +56,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     try {
       if (!username || !password) {
-        return setErrorMessage('Please enter username and password');
+        return setErrorMessage('Please input username and password');
       }
       setIsLoading(true);
       setErrorMessage('');

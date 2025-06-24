@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -29,6 +29,7 @@ const fetchReviews = async (): Promise<ReviewTask[]> => {
       processing_status: task.processing_status,
       assigned_to: task.assigned_to,
       created_at: task.created_at,
+      task_type: task.task_type,
     }));
   } catch (err) {
     console.error('Error fetching tasks:', err);
@@ -75,9 +76,9 @@ const PendingReviewsTasksScreen = () => {
     }, [])
   );
 
-  const handleAssignedPress = () => {
-    router.push('/review/assign');
-  };
+  // const handleAssignedPress = () => {
+  //   router.push('/review/assign');
+  // };
 
   const handleBackNavigation = () => {
     if (router.canGoBack()) {
@@ -87,10 +88,9 @@ const PendingReviewsTasksScreen = () => {
     }
   };
 
-  const handleSubmitForReview = (taskId: string) => {
-    router.push(
-      `/review/justify?taskId=${taskId}&data=${JSON.stringify(tasks.find(task => task.id === taskId))}`
-    );
+  const handleSubmitForReview = (taskId: string, taskData: ReviewTask) => {
+    const encodedData = encodeURIComponent(JSON.stringify(taskData));
+    router.push(`/review/justify?taskId=${taskId}&data=${encodedData}`);
   };
 
   return (
@@ -144,7 +144,7 @@ const PendingReviewsTasksScreen = () => {
               <Text className="text-sm mb-1 text-white">Priority: {task.priority}</Text>
               <Text className="text-sm text-white">Created At: {task.created_at}</Text>
               <TouchableOpacity
-                onPress={() => handleSubmitForReview(task.id)}
+                onPress={() => handleSubmitForReview(task.id, task)}
                 style={{ backgroundColor: '#F97316' }}
                 className="mt-2 self-start px-3 py-2 rounded"
               >

@@ -27,9 +27,9 @@ type Task = {
 
 export default function TaskDetailScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [task, setTask] = useState<Task | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { id, data: taskData } = useLocalSearchParams<{ id: string; data: string }>();
+  const [task, setTask] = useState<Task>(JSON.parse(taskData) as Task);
+  const [loading, setLoading] = useState<boolean>(!taskData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,7 +44,9 @@ export default function TaskDetailScreen() {
           setTask(response.data.data);
         }
       } catch (err) {
-        setError('Failed to load task details.');
+        if (!taskData) {
+          setError('Failed to load task details.');
+        }
       } finally {
         setLoading(false);
       }
@@ -149,7 +151,7 @@ export default function TaskDetailScreen() {
       case 'VIDEO':
         return <MaterialCommunityIcons name="file-video" size={24} color="#F97316" />;
       default:
-        return null;
+        return <MaterialCommunityIcons name="file-document" size={24} color="#F97316" />;
     }
   };
 
@@ -250,13 +252,13 @@ export default function TaskDetailScreen() {
 
           {task.processing_status === 'COMPLETED' ? (
             <View className="p-4 bg-muted rounded-md">
-              {task.task_type === 'TEXT' && (
+              {(task.task_type === 'TEXT' || !task.task_type) && (
                 <View className="text-foreground flex-col gap-y-3">
                   <Text className="text-foreground font-semibold text-[1rem]">
                     Classification: {task?.ai_output?.classification}
                   </Text>
                   <Text className="text-foreground font-semibold text-[1rem]">
-                    Confidence: {task?.ai_output?.confidence}
+                    Confidence: {Number(task?.ai_output?.confidence) * 100}%
                   </Text>
                 </View>
               )}
