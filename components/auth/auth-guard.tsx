@@ -78,5 +78,6 @@ export const AuthGate = ({ children }: Props) => {
       </>
     );
   }
+
   return <>{children}</>;
 };

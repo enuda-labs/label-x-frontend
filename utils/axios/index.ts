@@ -35,10 +35,7 @@ export class AxiosClient {
         try {
           const retryConfig = { ...error.config };
           const headers = new axios.AxiosHeaders(retryConfig.headers);
-          headers.set(
-            'Authorization',
-            `Bearer ${await this._storageClass.getItem(ACCESS_TOKEN_KEY)}`
-          );
+          headers.set('Authorization', `Bearer ${access}`);
           retryConfig.headers = headers;
           return this._axiosClient.request(retryConfig);
         } catch (retryError) {

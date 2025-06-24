@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { login } from '@/services/apis/auth';
 export interface LoginBody {
   username: string;
   password: string;
+  otp_code?: string; // allow optional OTP for 2FA flows
 }
 
 export interface UserData {
@@ -39,12 +40,18 @@ export interface LoginResponse {
 
 export default function LoginScreen() {
   const params = useLocalSearchParams();
+  const { setIsLoggedIn } = useGlobalStore();
   const [username, setUsername] = useState((params?.username as string) || '');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setIsLoggedIn } = useGlobalStore();
+  const [show2fa, setShow2fa] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    setErrorMessage('');
+  }, [verificationCode, username, password]);
 
   const handleLogin = async () => {
     try {
@@ -56,11 +63,14 @@ export default function LoginScreen() {
       const storage = new MemoryStorage();
       storage.removeItem(ACCESS_TOKEN_KEY);
       storage.removeItem(REFRESH_TOKEN_KEY);
-
-      const data = await login({
+      const body: LoginBody = {
         username,
         password,
-      });
+      };
+      if (show2fa) {
+        body.otp_code = verificationCode;
+      }
+      const data = await login(body);
       await storage.setItem(ACCESS_TOKEN_KEY, data.access);
       await storage.setItem(REFRESH_TOKEN_KEY, data.refresh);
       await storage.setItem('user', JSON.stringify(data.user_data));
@@ -76,6 +86,10 @@ export default function LoginScreen() {
     } catch (error: any) {
       // console.log(error.response?.data);
       if (isAxiosError(error)) {
+        if (error.response?.status === 401 && error.response?.data?.data?.requires_2fa) {
+          setShow2fa(true);
+          return;
+        }
         setErrorMessage(error.response?.data?.error || 'Unexpected error occurred');
       } else {
         setErrorMessage(error.message || 'Unexpected error occurred');
@@ -132,6 +146,20 @@ export default function LoginScreen() {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {show2fa && (
+              <View>
+                <Text className="mb-4 text-white">Input the code from your Authenticator app</Text>
+                <View className="flex justify-center mb-10">
+                  <Input
+                    placeholder="Enter 6 digits code"
+                    value={verificationCode}
+                    onChangeText={setVerificationCode}
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+            )}
             <Text className="text-red-500">{errorMessage}</Text>
 
             <Button
