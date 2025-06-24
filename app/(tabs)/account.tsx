@@ -73,6 +73,7 @@ export default function AccountScreen() {
     await storage.removeItem(REFRESH_TOKEN_KEY);
     await storage.removeItem('user');
     await storage.removeItem(ROLE);
+    await storage.removeItem('2fa_enabled');
     setIsLoggedIn(false);
     router.replace('/auth/login');
   };

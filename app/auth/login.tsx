@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -74,6 +75,9 @@ export default function LoginScreen() {
       await storage.setItem(ACCESS_TOKEN_KEY, data.access);
       await storage.setItem(REFRESH_TOKEN_KEY, data.refresh);
       await storage.setItem('user', JSON.stringify(data.user_data));
+      if (show2fa) {
+        await storage.setItem('2fa_enabled', 'true');
+      }
       setIsLoggedIn(true);
       if (data.user_data.is_admin) {
         router.replace('/(tabs)');
@@ -151,11 +155,15 @@ export default function LoginScreen() {
               <View>
                 <Text className="mb-4 text-white">Input the code from your Authenticator app</Text>
                 <View className="flex justify-center mb-10">
-                  <Input
-                    placeholder="Enter 6 digits code"
+                  <TextInput
                     value={verificationCode}
                     onChangeText={setVerificationCode}
+                    placeholder="Enter 6-digit code"
+                    placeholderTextColor="#666"
+                    className="bg-gray-700 text-white px-4 py-3 rounded-lg mb-4 w-full text-center text-lg font-mono"
                     keyboardType="numeric"
+                    maxLength={6}
+                    autoFocus
                   />
                 </View>
               </View>
