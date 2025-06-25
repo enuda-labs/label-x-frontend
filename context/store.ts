@@ -1,3 +1,5 @@
+// store.ts
+
 import { create } from 'zustand';
 import { GlobalState } from './store.types';
 

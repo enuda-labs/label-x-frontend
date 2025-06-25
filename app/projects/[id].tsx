@@ -61,7 +61,7 @@ const ProjectDetails = () => {
     };
     getActiveUsers();
     getInactiveUsers();
-  }, []);
+  }, [id]);
 
   const ActiveUsers = () => (
     <FlatList
