@@ -48,6 +48,7 @@ export default function LoginScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const [show2fa, setShow2fa] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
+  const { setIsLoggedIn, setUser } = useGlobalStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function LoginScreen() {
         await storage.setItem('2fa_enabled', 'true');
       }
       setIsLoggedIn(true);
+      setUser({ ...data.user_data, password });
       if (data.user_data.is_admin) {
         router.replace('/(tabs)');
         storage.setItem(ROLE, 'admin');
