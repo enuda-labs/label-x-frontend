@@ -41,14 +41,13 @@ export interface LoginResponse {
 
 export default function LoginScreen() {
   const params = useLocalSearchParams();
-  const { setIsLoggedIn } = useGlobalStore();
+  const { setIsLoggedIn, setUser } = useGlobalStore();
   const [username, setUsername] = useState((params?.username as string) || '');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [show2fa, setShow2fa] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
-  const { setIsLoggedIn, setUser } = useGlobalStore();
   const router = useRouter();
 
   useEffect(() => {
