@@ -36,7 +36,9 @@ const ProjectDetails = () => {
     const getInactiveUsers = async () => {
       try {
         const axiosClient = new AxiosClient();
-        const response = await axiosClient.get<Response>(`account/users/not-in-project/${id}/`);
+        const response = await axiosClient.get<Response>(
+          `account/users/not-in-project/?project_id=${id}`
+        );
         if (response.status === 200) {
           setUsers(response.data.users);
         }

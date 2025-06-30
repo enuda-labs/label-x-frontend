@@ -8,6 +8,7 @@ import { MemoryStorage } from '@/utils/storage';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, ROLE } from '@/constants';
 import { useGlobalStore } from '@/context/store';
 import { Ionicons } from '@expo/vector-icons';
+import { Button } from '@/components/ui/button';
 
 interface ProjectResponse {
   status: string;
@@ -18,6 +19,11 @@ type Project = {
   id: string;
   name: string;
 };
+
+interface CreateProjectPayload {
+  name: string;
+  description: string;
+}
 
 const Admin = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -55,6 +61,15 @@ const Admin = () => {
     router.replace('/auth/login');
   };
 
+  const handleCreate = async () => {
+    const axiosClient = new AxiosClient();
+
+    const response = await axiosClient.post<CreateProjectPayload>('account/organization/project/', {
+      name: 'First Project',
+      description: 'Description',
+    });
+  };
+
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background p-4">
@@ -90,6 +105,16 @@ const Admin = () => {
           >
             <Text className="text-lg font-bold text-white">{item.name}</Text>
           </TouchableOpacity>
+        )}
+        ListEmptyComponent={() => (
+          <View className="flex-1 justify-center items-center">
+            <Text>There no projects created yet</Text>
+            <Button onPress={() => {}}>
+              <Text className="font-medium" onPress={handleCreate}>
+                Create Project
+              </Text>
+            </Button>
+          </View>
         )}
       />
     </SafeAreaView>
